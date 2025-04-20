@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-form input {
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .login-form button {
+            background-color: #ff3333;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .login-form button:hover {
+            background-color: #cc0000;
+        }
+
+        .sidebar-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #444;
+        }
+
+        .sidebar-menu a.active {
+            background-color: #ff3333;
+            font-weight: bold;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            min-width: 0; /* Prevent content from overflowing */
+        }
+
+        .blurred-content {
+            filter: blur(5px);
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.7;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            margin: 0;
+            flex: 1;
+            text-align: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .employee-section {
+            display: none; /* Hidden by default */
+        }
+
+        .salary-section, .report-section {
+            display: none;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .salary-section h2, .report-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .placeholder-text {
+            font-style: italic;
+            color: #666;
+        }
+
+        .form-panel {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-inputs label {
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .form-inputs input,
+        .form-inputs select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .gender-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+            align-items: center;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .primary-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .secondary-btn {
+            background-color: #607D8B;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .server-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #555;
+            color: white;
+        }
+
+        .active-server {
+            background-color: #ff3333;
+        }
+
+        .user-greeting {
+            color: white;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .role-badge {
+            background-color: #ff3333;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Modified hiding style */
+        .sidebar-hidden .sidebar {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* For proper content alignment */
+        .left-buttons, .right-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .left-buttons, .right-buttons {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <!-- Login Form - Shown before login -->
+        <div id="loginContainer">
+            <h2>Đăng nhập</h2>
+            <div class="login-form" id="loginForm">
+                <input type="text" placeholder="Tên đăng nhập" id="username">
+                <input type="password" placeholder="Mật khẩu" id="password">
+                <button onclick="login()">Đăng nhập</button>
+            </div>
+        </div>
+        
+        <!-- Menu - Shown after login -->
+        <div id="sidebarMenu" class="sidebar-menu">
+            <h2>Chức năng</h2>
+            <a href="#" class="active" onclick="showSection('employee')">Danh sách nhân viên</a>
+            <!-- <a href="#" onclick="showSection('salary')">Tính lương</a>
+            <a href="#" onclick="showSection('report')">Báo cáo</a> -->
+            <a href="#" onclick="logout()">Đăng xuất</a>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <header>
+            <button onclick="toggleSidebar()" class="toggle-btn">☰</button>
+            <h1>Quản lý nhân viên</h1>
+            <div class="user-greeting" id="greeting"></div>
+        </header>
+
+        <main id="mainContent" class="blurred-content">
+            <!-- Employee Section -->
+            <div id="employeeSection" class="employee-section">
+                <div class="form-panel" id="formPanel">
+                    <div class="form-inputs">
+                        <label>ID
+                            <input type="number" id="empId">
+                        </label>
+                        <label>Tên
+                            <input type="text" id="empName">
+                        </label>
+                        <label>Năm sinh
+                            <input type="date" id="empDob">
+                        </label>
+                        <label>CCCD
+                            <input type="text" id="empCccd">
+                        </label>
+                        <label>SĐT
+                            <input type="text" id="empPhone">
+                        </label>
+                        <label>Giới tính
+                            <div class="gender-group">
+                                <div class="gender-option">
+                                    <input type="radio" name="empGender" value="Nam" id="male">
+                                    <label for="male">Nam</label>
+                                </div>
+                                <div class="gender-option">
+                                    <input type="radio" name="empGender" value="Nữ" id="female">
+                                    <label for="female">Nữ</label>
+                                </div>
+                            </div>
+                        </label>
+                        <label>Chức vụ
+                            <select id="empPosition">
+                                <option value="IT">IT</option>
+                                <option value="Kế toán">Kế toán</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                        </label>
+                        <label>Phòng ban
+                            <select id="empDepartment">
+                                <option value="PB01">PB01</option>
+                                <option value="PB02">PB02</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="buttons" id="actionButtons">
+                    <div class="left-buttons">
+                        <button onclick="addEmployee()" class="action-btn primary-btn">Thêm</button>
+                        <button onclick="editEmployee()" class="action-btn edit-btn">Sửa</button>
+                        <button onclick="deleteEmployee()" class="action-btn delete-btn">Xóa</button>
+                    </div>
+                    <div class="right-buttons">
+                        <button onclick="createDepartment()" class="action-btn secondary-btn">Tạo phòng ban</button>
+                        <button onclick="createPosition()" class="action-btn secondary-btn">Tạo chức vụ</button>
+                        <button onclick="deleteDepartment()" class="action-btn delete-btn">Xóa phòng ban</button>
+                        <button onclick="deletePosition()" class="action-btn delete-btn">Xóa chức vụ</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="employeeTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên</th>
+                                <th>Năm sinh</th>
+                                <th>CCCD</th>
+                                <th>SĐT</th>
+                                <th>Giới tính</th>
+                                <th>Chức vụ</th>
+                                <th>Phòng ban</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Salary Section -->
+            <!-- <div id="salarySection" class="salary-section">
+                <h2>Tính lương nhân viên</h2>
+                <p class="placeholder-text">Chức năng đang được phát triển...</p>
+            </div> -->
+            
+            <!-- Report Section -->
+            <!-- <div id="reportSection" class="report-section">
+                <h2>Báo cáo</h2>
+                <p class="placeholder-text">Chức năng đang được phát triển...</p>
+            </div> -->
+        </main>
+
+        <footer>
+            <button id="server1Btn" onclick="switchServer(1)" class="server-btn active-server">Server 1</button>
+            <button id="server2Btn" onclick="switchServer(2)" class="server-btn">Server 2</button>
+            <button id="serverOtherBtn" onclick="switchServer(3)" class="server-btn">Server khác</button>
+        </footer>
+    </div>
+
+    <script>
+        let currentServer = 1;
+        let sharedEmployees = [];
+        let isLoggedIn = false;
+        let currentUser = null;
+        let sidebarVisible = true;
+        let currentSection = 'employee';
+
+        function renderTable() {
+            const tbody = document.querySelector('#employeeTable tbody');
+            tbody.innerHTML = '';
+            sharedEmployees.forEach(emp => {
+                const row = `<tr onclick="selectEmployee(${emp.id})">
+                    <td>${emp.id}</td>
+                    <td>${emp.name}</td>
+                    <td>${emp.dob || '-'}</td>
+                    <td>${emp.cccd || '-'}</td>
+                    <td>${emp.phone || '-'}</td>
+                    <td>${emp.gender || '-'}</td>
+                    <td>${emp.position}</td>
+                    <td>${emp.department}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+            updateServerButtons();
+        }
+
+        function getGenderValue() {
+            const radios = document.getElementsByName('empGender');
+            for (const radio of radios) {
+                if (radio.checked) return radio.value;
+            }
+            return '';
+        }
+
+        function selectEmployee(id) {
+            // Only allow selection if user is admin
+            if (currentUser && currentUser.role === 'Nhân Viên') {
+                return; // Employees can't select
+            }
+            
+            const emp = sharedEmployees.find(e => e.id === id);
+            if (emp) {
+                document.getElementById('empId').value = emp.id;
+                document.getElementById('empName').value = emp.name;
+                document.getElementById('empDob').value = emp.dob || '';
+                document.getElementById('empCccd').value = emp.cccd || '';
+                document.getElementById('empPhone').value = emp.phone || '';
+
+                const radios = document.getElementsByName('empGender');
+                for (const radio of radios) {
+                    radio.checked = (radio.value === emp.gender);
+                }
+
+                document.getElementById('empPosition').value = emp.position;
+                document.getElementById('empDepartment').value = emp.department;
+            }
+        }
+
+        function addEmployee() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const id = parseInt(document.getElementById('empId').value);
+            const name = document.getElementById('empName').value;
+            const dob = document.getElementById('empDob').value;
+            const cccd = document.getElementById('empCccd').value;
+            const phone = document.getElementById('empPhone').value;
+            const gender = getGenderValue();
+            const position = document.getElementById('empPosition').value;
+            const department = document.getElementById('empDepartment').value;
+
+            if (!id || !name) {
+                alert("Vui lòng nhập ID và Tên nhân viên!");
+                return;
+            }
+
+            if (sharedEmployees.some(e => e.id === id)) {
+                alert("ID nhân viên đã tồn tại!");
+                return;
+            }
+
+            sharedEmployees.push({ id, name, dob, cccd, phone, gender, position, department });
+            renderTable();
+            clearForm();
+            alert("Thêm nhân viên thành công!");
+        }
+
+        function editEmployee() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const id = parseInt(document.getElementById('empId').value);
+            const emp = sharedEmployees.find(e => e.id === id);
+
+            if (!emp) {
+                alert("Không tìm thấy nhân viên với ID này!");
+                return;
+            }
+
+            emp.name = document.getElementById('empName').value || emp.name;
+            emp.dob = document.getElementById('empDob').value || emp.dob;
+            emp.cccd = document.getElementById('empCccd').value || emp.cccd;
+            emp.phone = document.getElementById('empPhone').value || emp.phone;
+            emp.gender = getGenderValue() || emp.gender;
+            emp.position = document.getElementById('empPosition').value || emp.position;
+            emp.department = document.getElementById('empDepartment').value || emp.department;
+
+            renderTable();
+            alert("Cập nhật thông tin nhân viên thành công!");
+        }
+
+        function deleteEmployee() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const id = parseInt(document.getElementById('empId').value);
+            const index = sharedEmployees.findIndex(e => e.id === id);
+
+            if (index === -1) {
+                alert("Không tìm thấy nhân viên với ID này!");
+                return;
+            }
+
+            if (confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
+                sharedEmployees.splice(index, 1);
+                renderTable();
+                clearForm();
+                alert("Xóa nhân viên thành công!");
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('empId').value = '';
+            document.getElementById('empName').value = '';
+            document.getElementById('empDob').value = '';
+            document.getElementById('empCccd').value = '';
+            document.getElementById('empPhone').value = '';
+
+            const radios = document.getElementsByName('empGender');
+            for (const radio of radios) {
+                radio.checked = false;
+            }
+        }
+
+        function switchServer(serverId) {
+            currentServer = serverId;
+            updateServerButtons();
+            // No data changes since all servers use the same data
+        }
+
+        function initSystem() {
+            // Initialize with sample data
+            sharedEmployees = [
+                { id: 1, name: "Nguyễn Văn A", position: "IT", department: "PB01", gender: "Nam", dob: "1990-01-01", cccd: "123456789", phone: "0901234567" },
+                { id: 2, name: "Trần Thị B", position: "Kế toán", department: "PB02", gender: "Nữ", dob: "1992-05-10", cccd: "987654321", phone: "0909876543" }
+            ];
+            
+            // Start with login form visible and content blurred
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('sidebarMenu').style.display = 'none';
+            document.getElementById('mainContent').classList.add('blurred-content');
+            document.getElementById('greeting').textContent = '';
+            
+            // Make sure sidebar is visible on init
+            showSidebar();
+            
+            // Show employee section by default
+            showSection('employee');
+            
+            // Render the initial table
+            renderTable();
+        }
+
+        function toggleSidebar() {
+            if (sidebarVisible) {
+                hideSidebar();
+            } else {
+                showSidebar();
+            }
+        }
+        
+        function hideSidebar() {
+            document.body.classList.add('sidebar-hidden');
+            sidebarVisible = false;
+        }
+        
+        function showSidebar() {
+            document.body.classList.remove('sidebar-hidden');
+            sidebarVisible = true;
+        }
+
+        function updateServerButtons() {
+            document.getElementById('server1Btn').classList.remove('active-server');
+            document.getElementById('server2Btn').classList.remove('active-server');
+            document.getElementById('serverOtherBtn').classList.remove('active-server');
+
+            if (currentServer === 1) {
+                document.getElementById('server1Btn').classList.add('active-server');
+            } else if (currentServer === 2) {
+                document.getElementById('server2Btn').classList.add('active-server');
+            } else {
+                document.getElementById('serverOtherBtn').classList.add('active-server');
+            }
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('employeeSection').style.display = 'none';
+            document.getElementById('salarySection').style.display = 'none';
+            document.getElementById('reportSection').style.display = 'none';
+            
+            // Show the selected section
+            document.getElementById(section + 'Section').style.display = 'block';
+            
+            // Update active state in menu
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('onclick').includes(section)) {
+                    item.classList.add('active');
+                }
+            });
+            
+            currentSection = section;
+        }
+
+        function createDepartment() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const dept = prompt("Nhập tên phòng ban mới:");
+            if (dept) {
+                const select = document.getElementById("empDepartment");
+                const option = document.createElement("option");
+                option.value = dept;
+                option.text = dept;
+                select.add(option);
+                alert("Tạo phòng ban mới thành công!");
+            }
+        }
+
+        function createPosition() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const pos = prompt("Nhập tên chức vụ mới:");
+            if (pos) {
+                const select = document.getElementById("empPosition");
+                const option = document.createElement("option");
+                option.value = pos;
+                option.text = pos;
+                select.add(option);
+                alert("Tạo chức vụ mới thành công!");
+            }
+        }
+
+        function deleteDepartment() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const select = document.getElementById("empDepartment");
+            const selectedIndex = select.selectedIndex;
+
+            if (selectedIndex > 0) {
+                if (confirm(`Bạn có chắc chắn muốn xóa phòng ban "${select.options[selectedIndex].text}"?`)) {
+                    select.remove(selectedIndex);
+                    alert("Xóa phòng ban thành công!");
+                }
+            } else {
+                alert("Vui lòng chọn phòng ban cần xóa!");
+            }
+        }
+
+        function deletePosition() {
+            if (!isLoggedIn || currentUser.role !== 'Quản Lý') {
+                alert("Bạn không có quyền thực hiện chức năng này!");
+                return;
+            }
+
+            const select = document.getElementById("empPosition");
+            const selectedIndex = select.selectedIndex;
+
+            if (selectedIndex > 0) {
+                if (confirm(`Bạn có chắc chắn muốn xóa chức vụ "${select.options[selectedIndex].text}"?`)) {
+                    select.remove(selectedIndex);
+                    alert("Xóa chức vụ thành công!");
+                }
+            } else {
+                alert("Vui lòng chọn chức vụ cần xóa!");
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+                return;
+            }
+
+            // Simple authentication logic with role management
+            if (username === 'admin' && password === '123') {
+                currentUser = {
+                    username: username,
+                    displayName: 'Administrator',
+                    role: 'Quản Lý'
+                };
+                isLoggedIn = true;
+            } else if (username === 'long' && password === '123') {
+                currentUser = {
+                    username: username,
+                    displayName: 'Long',
+                    role: 'Nhân Viên'
+                };
+                isLoggedIn = true;
+            } else {
+                alert("Tên đăng nhập hoặc mật khẩu không đúng!");
+                return;
+            }
+
+            // Update UI for logged in user
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('sidebarMenu').style.display = 'flex';
+            document.getElementById('mainContent').classList.remove('blurred-content');
+            document.getElementById('greeting').innerHTML = `<span class="role-badge">${currentUser.role}</span>`;
+            
+            // Apply role-based restrictions
+            applyRoleBasedAccess();
+            
+            // Hide sidebar after successful login on mobile
+            if (window.innerWidth <= 768) {
+                hideSidebar();
+            }
+            
+            alert(`Đăng nhập thành công!`);
+        }
+
+        function applyRoleBasedAccess() {
+            if (currentUser.role === 'Nhân Viên') {
+                // For employee role: Hide form and action buttons
+                document.getElementById('formPanel').style.display = 'none';
+                document.getElementById('actionButtons').style.display = 'none';
+                
+                // Show the employee section
+                showSection('employee');
+            } else if (currentUser.role === 'Quản Lý') {
+                // For admin role: Show everything
+                document.getElementById('formPanel').style.display = 'block';
+                document.getElementById('actionButtons').style.display = 'flex';
+                
+                // Show the employee section
+                showSection('employee');
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            
+            // Show login form and hide menu
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('sidebarMenu').style.display = 'none';
+            
+            // Blur content again
+            document.getElementById('mainContent').classList.add('blurred-content');
+            
+            // Clear greeting
+            document.getElementById('greeting').textContent = '';
+            
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+
+            // Reset form and table display
+            document.getElementById('formPanel').style.display = 'block';
+            document.getElementById('actionButtons').style.display = 'flex';
+            clearForm();
+            
+            // Show sidebar on logout
+            showSidebar();
+
+            alert("Đã đăng xuất!");
+        }
+
+        // Initialize the system when the page loads
+        window.onload = initSystem;
+    </script>
+</body>
+
+</html>
