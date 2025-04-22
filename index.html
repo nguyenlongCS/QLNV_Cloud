@@ -343,8 +343,6 @@
         <div id="sidebarMenu" class="sidebar-menu">
             <h2>Chức năng</h2>
             <a href="#" class="active" onclick="showSection('employee')">Danh sách nhân viên</a>
-            <a href="#" onclick="showSection('salary')">Tính lương</a>
-            <a href="#" onclick="showSection('report')">Báo cáo</a>
             <a href="#" onclick="logout()">Đăng xuất</a>
         </div>
     </div>
@@ -452,8 +450,6 @@
 
         <footer>
             <button id="server1Btn" onclick="switchServer(1)" class="server-btn active-server">Server 1</button>
-            <button id="server2Btn" onclick="switchServer(2)" class="server-btn">Server 2</button>
-            <button id="serverOtherBtn" onclick="switchServer(3)" class="server-btn">Server khác</button>
         </footer>
     </div>
 
@@ -657,23 +653,15 @@
 
         function updateServerButtons() {
             document.getElementById('server1Btn').classList.remove('active-server');
-            document.getElementById('server2Btn').classList.remove('active-server');
-            document.getElementById('serverOtherBtn').classList.remove('active-server');
 
             if (currentServer === 1) {
                 document.getElementById('server1Btn').classList.add('active-server');
-            } else if (currentServer === 2) {
-                document.getElementById('server2Btn').classList.add('active-server');
-            } else {
-                document.getElementById('serverOtherBtn').classList.add('active-server');
             }
         }
 
         function showSection(section) {
             // Hide all sections
             document.getElementById('employeeSection').style.display = 'none';
-            document.getElementById('salarySection').style.display = 'none';
-            document.getElementById('reportSection').style.display = 'none';
             
             // Show the selected section
             document.getElementById(section + 'Section').style.display = 'block';
