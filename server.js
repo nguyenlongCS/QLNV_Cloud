@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Tạo route mới cho "/api/status"
+app.get('/api/status', (req, res) => {
+    res.json({ message: "API is running!" });  // Trả về JSON thông báo
+});
+
 // Route cho "/api/nhanvien"
 app.get('/api/nhanvien', (req, res) => {
     const sql = 'SELECT * FROM nhanvien';
@@ -82,5 +87,18 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// Khởi động server
+
+// API nhận dữ liệu từ HTML
+app.post('/submit', (req, res) => {
+    const { username } = req.body;
+    const sql = 'INSERT INTO users (username) VALUES (?)';
+    db.query(sql, [username], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Lỗi khi lưu dữ liệu');
+        }
+        res.send('Lưu thành công!');
+    });
+});
+
 app.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}`));
