@@ -1,0 +1,324 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #222;
+    color: white;
+    padding: 20px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-form input {
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+}
+
+.login-form button {
+    background-color: #ff3333;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.login-form button:hover {
+    background-color: #cc0000;
+}
+
+.sidebar-menu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.sidebar-menu a:hover {
+    background-color: #444;
+}
+
+.sidebar-menu a.active {
+    background-color: #ff3333;
+    font-weight: bold;
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    min-width: 0;
+    /* Prevent content from overflowing */
+}
+
+.blurred-content {
+    filter: blur(5px);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.7;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+header h1 {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.employee-section {
+    display: none;
+    /* Hidden by default */
+}
+
+.salary-section,
+.report-section {
+    display: none;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.salary-section h2,
+.report-section h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.placeholder-text {
+    font-style: italic;
+    color: #666;
+}
+
+.form-panel {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.form-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-inputs label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.form-inputs input,
+.form-inputs select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.gender-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+    align-items: center;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.edit-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.secondary-btn {
+    background-color: #607D8B;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table-container {
+    overflow-x: auto;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.server-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+}
+
+.active-server {
+    background-color: #ff3333;
+}
+
+.user-greeting {
+    color: white;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.role-badge {
+    background-color: #ff3333;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Modified hiding style */
+.sidebar-hidden .sidebar {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* For proper content alignment */
+.left-buttons,
+.right-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .buttons {
+        flex-direction: column;
+    }
+
+    .left-buttons,
+    .right-buttons {
+        width: 100%;
+    }
+}
