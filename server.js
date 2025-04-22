@@ -26,22 +26,61 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Tạo route mới cho "/api/status"
-app.get('/api/status', (req, res) => {
-    res.json({ message: "API is running!" });  // Trả về JSON thông báo
-});
-
-// API nhận dữ liệu từ HTML
-app.post('/submit', (req, res) => {
-    const { username } = req.body;
-    const sql = 'INSERT INTO users (username) VALUES (?)';
-    db.query(sql, [username], (err, result) => {
+// Route cho "/api/nhanvien"
+app.get('/api/nhanvien', (req, res) => {
+    const sql = 'SELECT * FROM nhanvien';
+    db.query(sql, (err, result) => {
         if (err) {
             console.error(err);
-            return res.status(500).send('Lỗi khi lưu dữ liệu');
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu nhân viên' });
         }
-        res.send('Lưu thành công!');
+        res.json(result);
     });
 });
 
+// Route cho "/api/phongban"
+app.get('/api/phongban', (req, res) => {
+    const sql = 'SELECT * FROM phongban';  // Giả sử bạn có bảng `phongban`
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phòng ban' });
+        }
+        res.json(result);
+    });
+});
+
+// Route cho "/api/chucvu"
+app.get('/api/chucvu', (req, res) => {
+    const sql = 'SELECT * FROM chucvu';  // Giả sử bạn có bảng `chucvu`
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu chức vụ' });
+        }
+        res.json(result);
+    });
+});
+
+// Route cho "/api/login"
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Giả sử bạn có bảng `users` lưu thông tin đăng nhập
+    const sql = 'SELECT * FROM users WHERE username = ? AND password = ?';
+    db.query(sql, [username, password], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Lỗi khi đăng nhập' });
+        }
+
+        if (result.length === 0) {
+            return res.status(401).json({ error: 'Sai tên đăng nhập hoặc mật khẩu' });
+        }
+
+        res.json({ message: 'Đăng nhập thành công!' });
+    });
+});
+
+// Khởi động server
 app.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}`));
