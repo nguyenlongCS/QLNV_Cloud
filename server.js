@@ -6,7 +6,7 @@ const PORT = 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'html')));  // Thư mục chứa index.html
+app.use(express.static(path.join(__dirname, 'html')));
 
 // Kết nối MySQL RDS
 const db = mysql.createConnection({
@@ -23,7 +23,12 @@ db.connect(err => {
 
 // Cung cấp file index.html cho route "/"
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));  // Đảm bảo đường dẫn đúng tới index.html
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Tạo route mới cho "/api/status"
+app.get('/api/status', (req, res) => {
+    res.json({ message: "API is running!" });  // Trả về JSON thông báo
 });
 
 // API nhận dữ liệu từ HTML
