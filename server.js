@@ -36,7 +36,7 @@ app.get('/api/nhanvien', (req, res) => {
     const sql = 'SELECT * FROM nhanvien';
     db.query(sql, (err, result) => {
         if (err) {
-            console.error('Lỗi truy vấn:', err);  // In chi tiết lỗi ra console
+            console.error('Lỗi lấy nhanvien:', err);  // In chi tiết lỗi ra console
             return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu nhân viên', details: err });
         }
         res.json(result);  // Trả về kết quả
@@ -44,23 +44,12 @@ app.get('/api/nhanvien', (req, res) => {
 });
 
 
-// Route cho "/api/PhongBan"
-app.get('/api/PhongBan', (req, res) => {
-    db.query('SELECT * FROM PhongBan', (err, result) => {
+// Route cho "/api/phongban"
+app.get('/api/phongban', (req, res) => {
+    db.query('SELECT * FROM phongban', (err, result) => {
         if (err) {
-            console.error('Lỗi lấy PhongBan:', err); // In chi tiết
+            console.error('Lỗi lấy phongban:', err); // In chi tiết
             return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phòng ban' });
-        }
-        res.json(result);
-    });
-});
-
-// API chức vụ
-app.get('/api/ChucVu', (req, res) => {
-    db.query('SELECT * FROM ChucVu', (err, result) => {
-        if (err) {
-            console.error('Lỗi lấy ChucVu:', err); // In chi tiết
-            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu chức vụ' });
         }
         res.json(result);
     });
@@ -77,14 +66,14 @@ app.get('/api/chucvu', (req, res) => {
     });
 });
 
-// Route GET cho TaiKhoan
-app.get('/api/TaiKhoan', (req, res) => {
+// Route GET cho taikhoan
+app.get('/api/taikhoan', (req, res) => {
     const { username, password } = req.query;
 
     const sql = 'SELECT * FROM users WHERE username = ? AND password = ?';
     db.query(sql, [username, password], (err, result) => {
         if (err) {
-            console.error('Lỗi truy vấn đăng nhập:', err);
+            console.error('Lỗi truy vấn taikhoan:', err);
             return res.status(500).json({ error: 'Lỗi khi đăng nhập' });
         }
 
