@@ -36,46 +36,55 @@ app.get('/api/nhanvien', (req, res) => {
     const sql = 'SELECT * FROM nhanvien';
     db.query(sql, (err, result) => {
         if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu nhân viên' });
+            console.error('Lỗi truy vấn:', err);  // In chi tiết lỗi ra console
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu nhân viên', details: err });
         }
-        res.json(result);
+        res.json(result);  // Trả về kết quả
     });
 });
 
-// Route cho "/api/phongban"
-app.get('/api/phongban', (req, res) => {
-    const sql = 'SELECT * FROM phongban';  // Giả sử bạn có bảng `phongban`
-    db.query(sql, (err, result) => {
+
+// Route cho "/api/PhongBan"
+app.get('/api/PhongBan', (req, res) => {
+    db.query('SELECT * FROM PhongBan', (err, result) => {
         if (err) {
-            console.error(err);
+            console.error('Lỗi lấy PhongBan:', err); // In chi tiết
             return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phòng ban' });
         }
         res.json(result);
     });
 });
 
-// Route cho "/api/chucvu"
-app.get('/api/chucvu', (req, res) => {
-    const sql = 'SELECT * FROM chucvu';  // Giả sử bạn có bảng `chucvu`
-    db.query(sql, (err, result) => {
+// API chức vụ
+app.get('/api/ChucVu', (req, res) => {
+    db.query('SELECT * FROM ChucVu', (err, result) => {
         if (err) {
-            console.error(err);
+            console.error('Lỗi lấy ChucVu:', err); // In chi tiết
             return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu chức vụ' });
         }
         res.json(result);
     });
 });
 
-// Route cho "/api/login"
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
+// API chức vụ
+app.get('/api/chucvu', (req, res) => {
+    db.query('SELECT * FROM chucvu', (err, result) => {
+        if (err) {
+            console.error('Lỗi lấy chucvu:', err); // In chi tiết
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu chức vụ' });
+        }
+        res.json(result);
+    });
+});
 
-    // Giả sử bạn có bảng `users` lưu thông tin đăng nhập
+// Route GET cho TaiKhoan
+app.get('/api/TaiKhoan', (req, res) => {
+    const { username, password } = req.query;
+
     const sql = 'SELECT * FROM users WHERE username = ? AND password = ?';
     db.query(sql, [username, password], (err, result) => {
         if (err) {
-            console.error(err);
+            console.error('Lỗi truy vấn đăng nhập:', err);
             return res.status(500).json({ error: 'Lỗi khi đăng nhập' });
         }
 
@@ -86,6 +95,7 @@ app.post('/api/login', (req, res) => {
         res.json({ message: 'Đăng nhập thành công!' });
     });
 });
+
 
 
 // API nhận dữ liệu từ HTML
