@@ -70,7 +70,7 @@ app.get('/api/chucvu', (req, res) => {
 app.get('/api/login', (req, res) => {
     const { taikhoan, matkhau, vaitro } = req.query;
 
-    const sql = 'SELECT * FROM taikhoan WHERE taikhoan = ? AND matkhau = ? AND vaitro = ?';
+    const sql = 'SELECT * FROM login WHERE taikhoan = ? AND matkhau = ? AND vaitro = ?';
     db.query(sql, [taikhoan, matkhau, vaitro], (err, result) => {
         if (err) {
             console.error('Lỗi truy vấn login:', err);
