@@ -479,7 +479,8 @@
                 // Log the data being sent for debugging
                 console.log("Sending employee data:", JSON.stringify(employee));
 
-                const response = await fetch('http://75.101.198.89:3000/api/nhanvien', {
+                // Try a different URL format - might be singular form instead of plural
+                const response = await fetch('http://75.101.198.89:3000/api/nhanvien/add', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
