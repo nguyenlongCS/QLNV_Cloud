@@ -78,26 +78,24 @@ app.get('/api/login', (req, res) => {
     });
 });
 
-app.post('/api/nhanvien', async (req, res) => {
-    try {
-        const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
+app.post('/api/nhanvien', (req, res) => {
+    const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
 
-        console.log('Dữ liệu nhận:', req.body); // log dữ liệu vào
+    console.log('Dữ liệu nhận:', req.body);
 
-        const sql = `
-            INSERT INTO nhanvien 
-            (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `;
-        const [result] = await pool.execute(sql, [
-            ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id
-        ]);
+    const sql = `
+        INSERT INTO nhanvien 
+        (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 
+    db.query(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
         res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
-    } catch (error) {
-        console.error('❌ Lỗi SQL:', error.message); // hiện rõ lỗi
-        res.status(500).json({ error: error.message }); // trả về lỗi rõ cho frontend
-    }
+    });
 });
 
 
