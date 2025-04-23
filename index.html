@@ -315,30 +315,29 @@
         }
 
         // API validation cho đăng nhập
-        function login(taikhoan, matkhau, vaitro) {
-            return fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    taikhoan: taikhoan,
-                    matkhau: matkhau,
-                    vaitro: vaitro
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert('Lỗi: ' + data.error);
-                } else {
-                    alert('Đăng nhập thành công!');
-                    console.log('Thông tin người dùng:', data.user);
+        async function validateLogin(taikhoan, matkhau) {
+            try {
+                // Use the same server URL pattern that's used for other API calls
+                const response = await fetch('http://18.234.72.198:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        taikhoan: taikhoan,
+                        matkhau: matkhau
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Đăng nhập thất bại');
                 }
-            })
-            .catch(error => {
-                console.error('Lỗi khi gọi API:', error);
-            });
+
+                return await response.json();
+            } catch (error) {
+                console.error('Lỗi khi gọi API đăng nhập:', error);
+                throw error;
+            }
         }
 
 
@@ -681,6 +680,7 @@
 
             currentSection = section;
         }
+
 
         async function login() {
             const username = document.getElementById('username').value;

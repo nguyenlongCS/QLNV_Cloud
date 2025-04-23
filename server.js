@@ -71,18 +71,17 @@ app.get('/api/chucvu', (req, res) => {
 app.post('/api/login', (req, res) => {
     const taikhoan = req.body.taikhoan?.trim();
     const matkhau = req.body.matkhau?.trim();
-    const vaitro = req.body.vaitro?.trim();
 
-    console.log('Đăng nhập POST:', taikhoan, matkhau, vaitro);
+    console.log('Đăng nhập POST:', taikhoan, matkhau);
 
+    // Modified SQL to not check vaitro initially, just fetch it
     const sql = `
         SELECT * FROM login 
         WHERE taikhoan = ? 
-          AND matkhau = ? 
-          AND vaitro COLLATE utf8_general_ci = ?
+        AND matkhau = ?
     `;
 
-    db.query(sql, [taikhoan, matkhau, vaitro], (err, result) => {
+    db.query(sql, [taikhoan, matkhau], (err, result) => {
         if (err) {
             console.error('Lỗi truy vấn login:', err);
             return res.status(500).json({ error: 'Lỗi khi đăng nhập' });
@@ -92,7 +91,12 @@ app.post('/api/login', (req, res) => {
             return res.status(401).json({ error: 'Sai thông tin đăng nhập' });
         }
 
-        res.json({ message: 'Đăng nhập thành công!', user: result[0] });
+        // Return user data including vaitro
+        res.json({ 
+            message: 'Đăng nhập thành công!', 
+            taikhoan: result[0].taikhoan,
+            vaitro: result[0].vaitro 
+        });
     });
 });
 
