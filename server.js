@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
+const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
@@ -55,7 +56,7 @@ app.get('/api/phongban', (req, res) => {
     });
 });
 
-// API chức vụ
+// Route cho "/api/chucvu"
 app.get('/api/chucvu', (req, res) => {
     db.query('SELECT * FROM chucvu', (err, result) => {
         if (err) {
@@ -66,7 +67,7 @@ app.get('/api/chucvu', (req, res) => {
     });
 });
 
-// API chức vụ
+// Route cho "/api/login"
 app.get('/api/login', (req, res) => {
     db.query('SELECT * FROM login', (err, result) => {
         if (err) {
@@ -77,17 +78,22 @@ app.get('/api/login', (req, res) => {
     });
 });
 
-// API nhận dữ liệu từ HTML
-app.post('/submit', (req, res) => {
-    const { username } = req.body;
-    const sql = 'INSERT INTO users (username) VALUES (?)';
-    db.query(sql, [username], (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Lỗi khi lưu dữ liệu');
-        }
-        res.send('Lưu thành công!');
-    });
+// API thêm nhân viên
+app.post('/api/nhanvien', async (req, res) => {
+    try {
+        const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
+        const sql = `
+            INSERT INTO nhanvien (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        const [result] = await pool.execute(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id]);
+        res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
+    } catch (error) {
+        console.error('Lỗi SQL:', error);
+        res.status(500).json({ error: 'Lỗi khi thêm nhân viên' });
+    }
 });
+
+
 
 app.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}`));

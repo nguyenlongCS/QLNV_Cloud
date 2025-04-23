@@ -350,7 +350,7 @@
         <div id="sidebarMenu" class="sidebar-menu">
             <h2>Chức năng</h2>
             <a href="#" class="active" onclick="showSection('employee')">Danh sách nhân viên</a>
-            <a href="#" onclick="logout()">Đăng xuất</a>
+            <a href="#" class="active" onclick="logout()">Đăng xuất</a>
         </div>
     </div>
 
@@ -476,11 +476,7 @@
 
         async function addEmployeeToDb(employee) {
             try {
-                // Log the data being sent for debugging
-                console.log("Sending employee data:", JSON.stringify(employee));
-
-                // Try a different URL format - might be singular form instead of plural
-                const response = await fetch('http://75.101.198.89:3000/api/nhanvien/add', {
+                const response = await fetch('http://75.101.198.89:3000/api/nhanvien', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -500,6 +496,7 @@
                 throw error;
             }
         }
+
 
         async function updateEmployeeInDb(employee) {
             try {
