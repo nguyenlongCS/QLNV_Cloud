@@ -66,11 +66,26 @@ app.get('/api/chucvu', (req, res) => {
     });
 });
 
+
 // Route GET cho login
 app.get('/api/login', (req, res) => {
-    const { taikhoan, matkhau, vaitro } = req.query;
+    // Lấy và xử lý dữ liệu đầu vào
+    const taikhoan = req.query.taikhoan?.trim();
+    const matkhau = req.query.matkhau?.trim();
+    const vaitro = req.query.vaitro?.trim();
 
-    const sql = 'SELECT * FROM login WHERE taikhoan = ? AND matkhau = ? AND vaitro = ?';
+    // In log để kiểm tra
+    console.log('Đăng nhập với:', taikhoan, matkhau, vaitro);
+
+    // Câu truy vấn SQL
+    const sql = `
+        SELECT * FROM login 
+        WHERE taikhoan = ? 
+          AND matkhau = ? 
+          AND vaitro COLLATE utf8_general_ci = ?
+    `;
+
+    // Thực hiện truy vấn
     db.query(sql, [taikhoan, matkhau, vaitro], (err, result) => {
         if (err) {
             console.error('Lỗi truy vấn login:', err);
