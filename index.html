@@ -480,7 +480,7 @@
         //1.API để lấy nhân viên
         async function fetchEmployees() {
             try {
-                const response = await fetch('http://${hostname}:3000/api/nhanvien');
+                const response = await fetch(`http://${hostname}:3000/api/nhanvien`);
                 if (!response.ok) {
                     throw new Error('Không thể lấy dữ liệu nhân viên');
                 }
