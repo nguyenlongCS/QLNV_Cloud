@@ -479,7 +479,7 @@
         //1.API để lấy nhân viên
         async function fetchEmployees() {
             try {
-                const response = await fetch('http://75.101.198.89:3000/api/nhanvien');
+                const response = await fetch('http://${hostname}:3000/api/nhanvien');
                 if (!response.ok) {
                     throw new Error('Không thể lấy dữ liệu nhân viên');
                 }
@@ -494,7 +494,7 @@
 
         async function addEmployeeToDb(employee) {
             try {
-                const response = await fetch('http://75.101.198.89:3000/api/nhanvien', {
+                const response = await fetch('http://${hostname}:3000/api/nhanvien', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -518,7 +518,7 @@
 
         async function updateEmployeeInDb(employee) {
             try {
-                const response = await fetch(`http://75.101.198.89:3000/api/nhanvien/${employee.id}`, {
+                const response = await fetch(`http://${hostname}:3000/api/nhanvien/${employee.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -539,7 +539,7 @@
 
         async function deleteEmployeeFromDb(id) {
             try {
-                const response = await fetch(`http://75.101.198.89:3000/api/nhanvien/${id}`, {
+                const response = await fetch(`http://${hostname}:3000/api/nhanvien/${id}`, {
                     method: 'DELETE'
                 });
 
@@ -557,7 +557,7 @@
         // API để lấy phòng ban và chức vụ
         async function fetchDepartments() {
             try {
-                const response = await fetch('http://75.101.198.89:3000/api/phongban');
+                const response = await fetch('http://${hostname}:3000/api/phongban');
                 if (!response.ok) {
                     throw new Error('Không thể lấy dữ liệu phòng ban');
                 }
@@ -571,7 +571,7 @@
 
         async function fetchPositions() {
             try {
-                const response = await fetch('http://75.101.198.89:3000/api/chucvu');
+                const response = await fetch('http://${hostname}:3000/api/chucvu');
                 if (!response.ok) {
                     throw new Error('Không thể lấy dữ liệu chức vụ');
                 }
@@ -586,7 +586,7 @@
         // Hàm tạo và xóa phòng ban và chức vụ
         async function createDepartmentInDb(departmentId, departmentName) {
             try {
-                const response = await fetch('http://75.101.198.89:3000/api/phongban', {
+                const response = await fetch('http://${hostname}:3000/api/phongban', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -608,7 +608,7 @@
 
         async function createPositionInDb(positionId, positionName) {
             try {
-                const response = await fetch('http://75.101.198.89:3000/api/chucvu', {
+                const response = await fetch('http://${hostname}:3000/api/chucvu', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -630,7 +630,7 @@
 
         async function deleteDepartmentFromDb(departmentId) {
             try {
-                const response = await fetch(`http://75.101.198.89:3000/api/phongban/${departmentId}`, {
+                const response = await fetch(`http://${hostname}:3000/api/phongban/${departmentId}`, {
                     method: 'DELETE'
                 });
 
@@ -648,7 +648,7 @@
 
         async function deletePositionFromDb(positionId) {
             try {
-                const response = await fetch(`http://75.101.198.89:3000/api/chucvu/${positionId}`, {
+                const response = await fetch(`http://${hostname}:3000/api/chucvu/${positionId}`, {
                     method: 'DELETE'
                 });
 
@@ -694,7 +694,7 @@
             }
 
             // Gọi API để lấy dữ liệu người dùng
-            fetch('http://75.101.198.89:3000/api/login')
+            fetch('http://${hostname}:3000/api/login')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Không thể kết nối đến server');
@@ -1161,7 +1161,7 @@
         // Thêm sự kiện cho server button
         document.getElementById('server1Btn').addEventListener('click', function () {
             // Kiểm tra kết nối server
-            fetch('http://75.101.198.89:3000/api/status')
+            fetch('http://${hostname}:3000/api/status')
                 .then(response => {
                     if (!response.ok) throw new Error('Server không phản hồi');
                     return response.json();
@@ -1197,7 +1197,7 @@
             showSection('employee');
 
             // Kiểm tra kết nối server
-            fetch('http://75.101.198.89:3000/api/status')
+            fetch('http://${hostname}:3000/api/status')
                 .then(response => {
                     if (!response.ok) throw new Error('Server không phản hồi');
                     return response.json();
