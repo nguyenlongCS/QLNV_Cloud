@@ -495,7 +495,7 @@
 
         async function addEmployeeToDb(employee) {
             try {
-                const response = await fetch('http://${hostname}:3000/api/nhanvien', {
+                const response = await fetch(`http://${hostname}:3000/api/nhanvien`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
