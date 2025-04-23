@@ -131,7 +131,7 @@
         let sidebarVisible = true;
         let currentSection = 'employee';
 
-        // Các API functions để tương tác với cơ sở dữ liệu
+        //1.API để lấy nhân viên
         async function fetchEmployees() {
             try {
                 const response = await fetch('http://18.234.72.198:3000/api/nhanvien');
@@ -314,84 +314,127 @@
             }
         }
 
-        // API validation cho đăng nhập
-        async function validateLogin(taikhoan, matkhau) {
+        //gia su api dang nhap:
+        //1.API để lấy nhân viên
+        async function fetchLogin() {
             try {
-                // Make sure we're using the full URL and the correct HTTP method
-                const response = await fetch('http://18.234.72.198:3000/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        taikhoan: taikhoan,
-                        matkhau: matkhau
-                    })
-                });
-
+                const response = await fetch('http://18.234.72.198:3000/api/login');
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Đăng nhập thất bại');
+                    throw new Error('Không thể lấy dữ liệu nhân viên');
                 }
-
-                return await response.json();
+                const data = await response.json();
+                sharedEmployees = data;
+                renderTable();
             } catch (error) {
-                console.error('Lỗi khi gọi API đăng nhập:', error);
-                throw error;
+                console.error('Lỗi:', error);
+                alert(`Không thể kết nối đến server: ${error.message}`);
             }
         }
+        // // API để đăng nhập
+        // async function validateLogin(taikhoan, matkhau) {
+        //     try {
+        //         // Make sure we're using the full URL and the correct HTTP method
+        //         const response = await fetch('http://18.234.72.198:3000/api/login', {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({
+        //                 taikhoan: taikhoan,
+        //                 matkhau: matkhau
+        //             })
+        //         });
 
-        async function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        //         if (!response.ok) {
+        //             const errorData = await response.json();
+        //             throw new Error(errorData.error || 'Đăng nhập thất bại');
+        //         }
 
-            if (!username || !password) {
-                alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
-                return;
-            }
+        //         return await response.json();
+        //     } catch (error) {
+        //         console.error('Lỗi khi gọi API đăng nhập:', error);
+        //         throw error;
+        //     }
+        // }
 
-            try {
-                // For debugging - log before the request is made
-                console.log("Attempting login with:", username);
+        // async function login() {
+        //     const username = document.getElementById('username').value;
+        //     const password = document.getElementById('password').value;
 
-                const userData = await validateLogin(username, password);
+        //     if (!username || !password) {
+        //         alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+        //         return;
+        //     }
 
-                // For debugging - log after successful response
-                console.log("Login response:", userData);
+        //     try {
+        //         // For debugging - log before the request is made
+        //         console.log("Attempting login with:", username);
 
-                currentUser = {
-                    taikhoan: username,
-                    vaitro: userData.vaitro || userData.user.vaitro // Handle different response formats
-                };
+        //         const userData = await validateLogin(username, password);
 
-                isLoggedIn = true;
+        //         // For debugging - log after successful response
+        //         console.log("Login response:", userData);
 
-                // Update UI for logged in user
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('sidebarMenu').style.display = 'flex';
-                document.getElementById('mainContent').classList.remove('blurred-content');
-                document.getElementById('greeting').innerHTML = `<span class="role-badge">${currentUser.vaitro === 'quản lý' ? 'Quản Lý' : 'Nhân Viên'}</span>`;
+        //         currentUser = {
+        //             taikhoan: username,
+        //             vaitro: userData.vaitro || userData.user.vaitro // Handle different response formats
+        //         };
 
-                // Apply role-based restrictions
-                applyRoleBasedAccess();
+        //         isLoggedIn = true;
 
-                // Load data after successful login
-                fetchEmployees();
-                fetchDepartments();
-                fetchPositions();
+        //         // Update UI for logged in user
+        //         document.getElementById('loginContainer').style.display = 'none';
+        //         document.getElementById('sidebarMenu').style.display = 'flex';
+        //         document.getElementById('mainContent').classList.remove('blurred-content');
+        //         document.getElementById('greeting').innerHTML = `<span class="role-badge">${currentUser.vaitro === 'quản lý' ? 'Quản Lý' : 'Nhân Viên'}</span>`;
 
-                // Hide sidebar after successful login on mobile
-                if (window.innerWidth <= 768) {
-                    hideSidebar();
-                }
+        //         // Apply role-based restrictions
+        //         applyRoleBasedAccess();
 
-                alert(`Đăng nhập thành công!`);
-            } catch (error) {
-                console.error("Login error details:", error);
-                alert("Tên đăng nhập hoặc mật khẩu không đúng!");
-            }
+        //         // Load data after successful login
+        //         fetchEmployees();
+        //         fetchDepartments();
+        //         fetchPositions();
+
+        //         // Hide sidebar after successful login on mobile
+        //         if (window.innerWidth <= 768) {
+        //             hideSidebar();
+        //         }
+
+        //         alert(`Đăng nhập thành công!`);
+        //     } catch (error) {
+        //         console.error("Login error details:", error);
+        //         alert("Tên đăng nhập hoặc mật khẩu không đúng!");
+        //     }
+        // }
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+
+            // Show login form and hide menu
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('sidebarMenu').style.display = 'none';
+
+            // Blur content again
+            document.getElementById('mainContent').classList.add('blurred-content');
+
+            // Clear greeting
+            document.getElementById('greeting').textContent = '';
+
+            // Clear login form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+
+            // Reset form and table display
+            document.getElementById('formPanel').style.display = 'block';
+            document.getElementById('actionButtons').style.display = 'flex';
+            clearForm();
+
+            // Show sidebar on logout
+            showSidebar();
+
+            alert("Đã đăng xuất!");
         }
-
 
         // Format date function
         function formatDate(dateString) {
@@ -761,34 +804,7 @@
         }
 
 
-        function logout() {
-            isLoggedIn = false;
-            currentUser = null;
 
-            // Show login form and hide menu
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('sidebarMenu').style.display = 'none';
-
-            // Blur content again
-            document.getElementById('mainContent').classList.add('blurred-content');
-
-            // Clear greeting
-            document.getElementById('greeting').textContent = '';
-
-            // Clear login form
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-
-            // Reset form and table display
-            document.getElementById('formPanel').style.display = 'block';
-            document.getElementById('actionButtons').style.display = 'flex';
-            clearForm();
-
-            // Show sidebar on logout
-            showSidebar();
-
-            alert("Đã đăng xuất!");
-        }
 
         function initSystem() {
             // Start with empty employees array
