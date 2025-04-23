@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css">
     <title>Employee Manager</title>
-    
+
 </head>
 
 <body>
@@ -20,7 +20,7 @@
                 <button onclick="login()">Đăng nhập</button>
             </div>
         </div>
-        
+
         <!-- Menu - Shown after login -->
         <div id="sidebarMenu" class="sidebar-menu">
             <h2>Chức năng</h2>
@@ -130,7 +130,7 @@
         let currentUser = null;
         let sidebarVisible = true;
         let currentSection = 'employee';
-    
+
         // Các API functions để tương tác với cơ sở dữ liệu
         async function fetchEmployees() {
             try {
@@ -146,7 +146,7 @@
                 alert(`Không thể kết nối đến server: ${error.message}`);
             }
         }
-    
+
         async function addEmployeeToDb(employee) {
             try {
                 const response = await fetch('http://18.234.72.198:3000/api/nhanvien', {
@@ -156,18 +156,18 @@
                     },
                     body: JSON.stringify(employee)
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể thêm nhân viên');
                 }
-                
+
                 return await response.json();
             } catch (error) {
                 console.error('Lỗi:', error);
                 throw error;
             }
         }
-    
+
         async function updateEmployeeInDb(employee) {
             try {
                 const response = await fetch(`http://18.234.72.198:3000/api/nhanvien/${employee.id}`, {
@@ -177,35 +177,35 @@
                     },
                     body: JSON.stringify(employee)
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể cập nhật nhân viên');
                 }
-                
+
                 return await response.json();
             } catch (error) {
                 console.error('Lỗi:', error);
                 throw error;
             }
         }
-    
+
         async function deleteEmployeeFromDb(id) {
             try {
                 const response = await fetch(`http://18.234.72.198:3000/api/nhanvien/${id}`, {
                     method: 'DELETE'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể xóa nhân viên');
                 }
-                
+
                 return await response.json();
             } catch (error) {
                 console.error('Lỗi:', error);
                 throw error;
             }
         }
-    
+
         // API để lấy phòng ban và chức vụ
         async function fetchDepartments() {
             try {
@@ -219,7 +219,7 @@
                 console.error('Lỗi:', error);
             }
         }
-    
+
         async function fetchPositions() {
             try {
                 const response = await fetch('http://18.234.72.198:3000/api/chucvu');
@@ -232,7 +232,7 @@
                 console.error('Lỗi:', error);
             }
         }
-    
+
         // Hàm tạo và xóa phòng ban và chức vụ
         async function createDepartmentInDb(departmentId, departmentName) {
             try {
@@ -243,11 +243,11 @@
                     },
                     body: JSON.stringify({ id: departmentId, ten: departmentName })
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể tạo phòng ban');
                 }
-                
+
                 await fetchDepartments(); // Refresh departments
                 return await response.json();
             } catch (error) {
@@ -255,7 +255,7 @@
                 throw error;
             }
         }
-    
+
         async function createPositionInDb(positionId, positionName) {
             try {
                 const response = await fetch('http://18.234.72.198:3000/api/chucvu', {
@@ -265,11 +265,11 @@
                     },
                     body: JSON.stringify({ id: positionId, ten: positionName })
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể tạo chức vụ');
                 }
-                
+
                 await fetchPositions(); // Refresh positions
                 return await response.json();
             } catch (error) {
@@ -277,17 +277,17 @@
                 throw error;
             }
         }
-    
+
         async function deleteDepartmentFromDb(departmentId) {
             try {
                 const response = await fetch(`http://18.234.72.198:3000/api/phongban/${departmentId}`, {
                     method: 'DELETE'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể xóa phòng ban');
                 }
-                
+
                 await fetchDepartments(); // Refresh departments
                 return await response.json();
             } catch (error) {
@@ -295,17 +295,17 @@
                 throw error;
             }
         }
-    
+
         async function deletePositionFromDb(positionId) {
             try {
                 const response = await fetch(`http://18.234.72.198:3000/api/chucvu/${positionId}`, {
                     method: 'DELETE'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Không thể xóa chức vụ');
                 }
-                
+
                 await fetchPositions(); // Refresh positions
                 return await response.json();
             } catch (error) {
@@ -313,36 +313,36 @@
                 throw error;
             }
         }
-    
+
         // API validation cho đăng nhập
-        async function validateLogin(username, password) {
+        async function validateLogin(username, password, role) {  // Thêm tham số 'role'
             try {
-                const response = await fetch('http://18.234.72.198:3000/api/taikhoan', {
-                    method: 'POST',
+                const response = await fetch(`http://18.234.72.198:3000/api/login?taikhoan=${username}&matkhau=${password}&vaitro=${role}`, { // Dùng GET và thêm 'vaitro'
+                    method: 'GET',  // Thay phương thức thành GET theo API của server
                     headers: {
                         'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ taikhoan: username, matkhau: password })
+                    }
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Đăng nhập thất bại');
                 }
-                
+
                 return await response.json();
             } catch (error) {
                 console.error('Lỗi:', error);
                 throw error;
             }
         }
-    
+
+
         // Format date function
         function formatDate(dateString) {
             if (!dateString) return '-';
             const date = new Date(dateString);
             return date.toLocaleDateString('vi-VN');
         }
-    
+
         function renderTable() {
             const tbody = document.querySelector('#employeeTable tbody');
             tbody.innerHTML = '';
@@ -361,12 +361,12 @@
             });
             updateServerButtons();
         }
-    
+
         // Hàm điền dữ liệu vào select
         function populateDepartmentSelect(departments) {
             const select = document.getElementById("empDepartment");
             select.innerHTML = ''; // Clear current options
-            
+
             departments.forEach(dept => {
                 const option = document.createElement("option");
                 option.value = dept.id;
@@ -374,11 +374,11 @@
                 select.add(option);
             });
         }
-    
+
         function populatePositionSelect(positions) {
             const select = document.getElementById("empPosition");
             select.innerHTML = ''; // Clear current options
-            
+
             positions.forEach(pos => {
                 const option = document.createElement("option");
                 option.value = pos.id;
@@ -386,7 +386,7 @@
                 select.add(option);
             });
         }
-    
+
         function getGenderValue() {
             const radios = document.getElementsByName('empGender');
             for (const radio of radios) {
@@ -394,13 +394,13 @@
             }
             return '';
         }
-    
+
         function selectEmployee(id) {
             // Only allow selection if user is admin
             if (currentUser && currentUser.vaitro === 'nhân viên') {
                 return; // Employees can't select
             }
-            
+
             const emp = sharedEmployees.find(e => e.id === id);
             if (emp) {
                 document.getElementById('empId').value = emp.id;
@@ -408,23 +408,23 @@
                 document.getElementById('empDob').value = emp.namsinh ? emp.namsinh.split('T')[0] : '';
                 document.getElementById('empCccd').value = emp.cccd || '';
                 document.getElementById('empPhone').value = emp.sdt || '';
-    
+
                 const radios = document.getElementsByName('empGender');
                 for (const radio of radios) {
                     radio.checked = (radio.value === emp.gioitinh);
                 }
-    
+
                 document.getElementById('empPosition').value = emp.chucvu_id;
                 document.getElementById('empDepartment').value = emp.phongban_id;
             }
         }
-    
+
         async function addEmployee() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const name = document.getElementById('empName').value;
             const dob = document.getElementById('empDob').value;
             const cccd = document.getElementById('empCccd').value;
@@ -432,23 +432,23 @@
             const gender = getGenderValue();
             const position = document.getElementById('empPosition').value;
             const department = document.getElementById('empDepartment').value;
-    
+
             if (!name) {
                 alert("Vui lòng nhập Tên nhân viên!");
                 return;
             }
-    
+
             try {
-                const newEmployee = { 
-                    ten: name, 
-                    namsinh: dob, 
-                    cccd: cccd, 
-                    sdt: phone, 
-                    gioitinh: gender, 
-                    chucvu_id: position, 
-                    phongban_id: department 
+                const newEmployee = {
+                    ten: name,
+                    namsinh: dob,
+                    cccd: cccd,
+                    sdt: phone,
+                    gioitinh: gender,
+                    chucvu_id: position,
+                    phongban_id: department
                 };
-                
+
                 await addEmployeeToDb(newEmployee);
                 await fetchEmployees(); // Refresh employee list
                 clearForm();
@@ -457,20 +457,20 @@
                 alert(`Lỗi: ${error.message}`);
             }
         }
-    
+
         async function editEmployee() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const id = parseInt(document.getElementById('empId').value);
-            
+
             if (!id) {
                 alert("Vui lòng chọn nhân viên cần sửa!");
                 return;
             }
-    
+
             const name = document.getElementById('empName').value;
             const dob = document.getElementById('empDob').value;
             const cccd = document.getElementById('empCccd').value;
@@ -478,19 +478,19 @@
             const gender = getGenderValue();
             const position = document.getElementById('empPosition').value;
             const department = document.getElementById('empDepartment').value;
-    
+
             try {
-                const updatedEmployee = { 
+                const updatedEmployee = {
                     id: id,
-                    ten: name, 
-                    namsinh: dob, 
-                    cccd: cccd, 
-                    sdt: phone, 
-                    gioitinh: gender, 
-                    chucvu_id: position, 
-                    phongban_id: department 
+                    ten: name,
+                    namsinh: dob,
+                    cccd: cccd,
+                    sdt: phone,
+                    gioitinh: gender,
+                    chucvu_id: position,
+                    phongban_id: department
                 };
-                
+
                 await updateEmployeeInDb(updatedEmployee);
                 await fetchEmployees(); // Refresh employee list
                 alert("Cập nhật thông tin nhân viên thành công!");
@@ -498,20 +498,20 @@
                 alert(`Lỗi: ${error.message}`);
             }
         }
-    
+
         async function deleteEmployee() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const id = parseInt(document.getElementById('empId').value);
-            
+
             if (!id) {
                 alert("Vui lòng chọn nhân viên cần xóa!");
                 return;
             }
-    
+
             if (confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
                 try {
                     await deleteEmployeeFromDb(id);
@@ -523,29 +523,29 @@
                 }
             }
         }
-    
+
         function clearForm() {
             document.getElementById('empId').value = '';
             document.getElementById('empName').value = '';
             document.getElementById('empDob').value = '';
             document.getElementById('empCccd').value = '';
             document.getElementById('empPhone').value = '';
-    
+
             const radios = document.getElementsByName('empGender');
             for (const radio of radios) {
                 radio.checked = false;
             }
         }
-        
+
         async function createDepartment() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const deptId = prompt("Nhập mã phòng ban mới (vd: PB03):");
             if (!deptId) return;
-            
+
             const deptName = prompt("Nhập tên phòng ban mới:");
             if (deptName) {
                 try {
@@ -556,16 +556,16 @@
                 }
             }
         }
-    
+
         async function createPosition() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const posId = prompt("Nhập mã chức vụ mới (vd: CV03):");
             if (!posId) return;
-            
+
             const posName = prompt("Nhập tên chức vụ mới:");
             if (posName) {
                 try {
@@ -576,17 +576,17 @@
                 }
             }
         }
-    
+
         async function deleteDepartment() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const select = document.getElementById("empDepartment");
             const selectedId = select.value;
             const selectedText = select.options[select.selectedIndex].text;
-    
+
             if (selectedId) {
                 if (confirm(`Bạn có chắc chắn muốn xóa phòng ban "${selectedText}"?`)) {
                     try {
@@ -600,17 +600,17 @@
                 alert("Vui lòng chọn phòng ban cần xóa!");
             }
         }
-    
+
         async function deletePosition() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
                 return;
             }
-    
+
             const select = document.getElementById("empPosition");
             const selectedId = select.value;
             const selectedText = select.options[select.selectedIndex].text;
-    
+
             if (selectedId) {
                 if (confirm(`Bạn có chắc chắn muốn xóa chức vụ "${selectedText}"?`)) {
                     try {
@@ -624,21 +624,21 @@
                 alert("Vui lòng chọn chức vụ cần xóa!");
             }
         }
-    
+
         function switchServer(serverId) {
             currentServer = serverId;
             updateServerButtons();
             // No data changes since all servers use the same data
         }
-    
+
         function updateServerButtons() {
             document.getElementById('server1Btn').classList.remove('active-server');
-    
+
             if (currentServer === 1) {
                 document.getElementById('server1Btn').classList.add('active-server');
             }
         }
-    
+
         function toggleSidebar() {
             if (sidebarVisible) {
                 hideSidebar();
@@ -646,24 +646,24 @@
                 showSidebar();
             }
         }
-        
+
         function hideSidebar() {
             document.body.classList.add('sidebar-hidden');
             sidebarVisible = false;
         }
-        
+
         function showSidebar() {
             document.body.classList.remove('sidebar-hidden');
             sidebarVisible = true;
         }
-    
+
         function showSection(section) {
             // Hide all sections
             document.getElementById('employeeSection').style.display = 'none';
-            
+
             // Show the selected section
             document.getElementById(section + 'Section').style.display = 'block';
-            
+
             // Update active state in menu
             const menuItems = document.querySelectorAll('.sidebar-menu a');
             menuItems.forEach(item => {
@@ -672,117 +672,127 @@
                     item.classList.add('active');
                 }
             });
-            
+
             currentSection = section;
         }
-    
+
         async function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-    
+
             if (!username || !password) {
                 alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
                 return;
             }
-    
+
             try {
                 const userData = await validateLogin(username, password);
-                
+
                 currentUser = {
                     taikhoan: username,
                     vaitro: userData.vaitro
                 };
-                
+
                 isLoggedIn = true;
-                
+
                 // Update UI for logged in user
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('sidebarMenu').style.display = 'flex';
                 document.getElementById('mainContent').classList.remove('blurred-content');
                 document.getElementById('greeting').innerHTML = `<span class="role-badge">${currentUser.vaitro === 'quản lý' ? 'Quản Lý' : 'Nhân Viên'}</span>`;
-                
+
                 // Apply role-based restrictions
                 applyRoleBasedAccess();
-                
+
                 // Load data after successful login
                 fetchEmployees();
                 fetchDepartments();
                 fetchPositions();
-                
+
                 // Hide sidebar after successful login on mobile
                 if (window.innerWidth <= 768) {
                     hideSidebar();
                 }
-                
+
                 alert(`Đăng nhập thành công!`);
             } catch (error) {
                 alert("Tên đăng nhập hoặc mật khẩu không đúng!");
             }
         }
-    
+
         function applyRoleBasedAccess() {
+            // Kiểm tra xem currentUser có tồn tại và có thuộc tính vaitro không
+            if (!currentUser || !currentUser.vaitro) {
+                console.error('Không có thông tin người dùng hoặc vai trò không xác định.');
+                return;
+            }
+
+            // Phân quyền dựa trên vai trò của người dùng
             if (currentUser.vaitro === 'nhân viên') {
-                // For employee role: Hide form and action buttons
+                // Với vai trò nhân viên: Ẩn form và các nút hành động
                 document.getElementById('formPanel').style.display = 'none';
                 document.getElementById('actionButtons').style.display = 'none';
-                
-                // Show the employee section
+
+                // Hiển thị phần dành cho nhân viên
                 showSection('employee');
             } else if (currentUser.vaitro === 'quản lý') {
-                // For admin role: Show everything
+                // Với vai trò quản lý: Hiển thị tất cả các phần
                 document.getElementById('formPanel').style.display = 'block';
                 document.getElementById('actionButtons').style.display = 'flex';
-                
-                // Show the employee section
+
+                // Hiển thị phần dành cho nhân viên (hoặc một phần khác nếu cần)
                 showSection('employee');
+            } else {
+                console.warn('Vai trò không xác định hoặc không hỗ trợ.');
             }
         }
-    
+
+
         function logout() {
             isLoggedIn = false;
             currentUser = null;
-            
+
             // Show login form and hide menu
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('sidebarMenu').style.display = 'none';
-            
+
             // Blur content again
             document.getElementById('mainContent').classList.add('blurred-content');
-            
+
             // Clear greeting
             document.getElementById('greeting').textContent = '';
-            
+
             // Clear login form
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
-    
+
             // Reset form and table display
             document.getElementById('formPanel').style.display = 'block';
             document.getElementById('actionButtons').style.display = 'flex';
             clearForm();
-            
+
             // Show sidebar on logout
             showSidebar();
-    
+
             alert("Đã đăng xuất!");
         }
-    
+
         function initSystem() {
             // Start with empty employees array
             sharedEmployees = [];
-            
+
             // Start with login form visible and content blurred
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('sidebarMenu').style.display = 'none';
             document.getElementById('mainContent').classList.add('blurred-content');
             document.getElementById('greeting').textContent = '';
-            
+
             // Make sure sidebar is visible on init
             showSidebar();
-            
+
             // Show employee section by default
             showSection('employee');
-            
+
             // Kiểm tra kết nối server
             fetch('http://18.234.72.198:3000/api/status')
                 .then(response => {
@@ -798,7 +808,7 @@
                     alert('Không thể kết nối tới server Node.js. Vui lòng đảm bảo server đang chạy ở cổng 3000.');
                 });
         }
-    
+
         // Initialize the system when the page loads
         window.onload = initSystem;
     </script>

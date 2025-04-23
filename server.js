@@ -68,22 +68,23 @@ app.get('/api/chucvu', (req, res) => {
 
 // Route GET cho login
 app.get('/api/login', (req, res) => {
-    const { username, password } = req.query;
+    const { taikhoan, matkhau, vaitro } = req.query;
 
-    const sql = 'SELECT * FROM taikhoan WHERE taikhoan = ? AND matkhau = ?';
-    db.query(sql, [taikhoan, matkhau], (err, result) => {
+    const sql = 'SELECT * FROM taikhoan WHERE taikhoan = ? AND matkhau = ? AND vaitro = ?';
+    db.query(sql, [taikhoan, matkhau, vaitro], (err, result) => {
         if (err) {
             console.error('Lỗi truy vấn login:', err);
             return res.status(500).json({ error: 'Lỗi khi đăng nhập' });
         }
 
         if (result.length === 0) {
-            return res.status(401).json({ error: 'Sai tên đăng nhập hoặc mật khẩu' });
+            return res.status(401).json({ error: 'Sai thông tin đăng nhập' });
         }
 
-        res.json({ message: 'Đăng nhập thành công!' });
+        res.json({ message: 'Đăng nhập thành công!', user: result[0] });
     });
 });
+
 
 
 
