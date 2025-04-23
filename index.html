@@ -17,7 +17,7 @@
             <div class="login-form" id="loginForm">
                 <input type="text" placeholder="Tên đăng nhập" id="username">
                 <input type="password" placeholder="Mật khẩu" id="password">
-                <button onclick="login()">Đăng nhập</button>
+                <button id="loginButton">Đăng nhập</button>
             </div>
         </div>
 
@@ -119,7 +119,7 @@
         </main>
 
         <footer>
-            <button id="server1Btn" onclick="switchServer(1)" class="server-btn active-server">Server 1</button>
+            <button id="server1Btn" class="server-btn">Server 1</button>
         </footer>
     </div>
 
@@ -368,8 +368,10 @@
                         // Áp dụng phân quyền dựa trên vai trò
                         applyRoleBasedAccess();
 
-                        // Tải lại dữ liệu bảng nếu cần
-                        fetchData();
+                        // Tải dữ liệu
+                        fetchEmployees();
+                        fetchDepartments();
+                        fetchPositions();
                     } else {
                         // Đăng nhập thất bại
                         alert(result.message);
@@ -381,8 +383,11 @@
                 });
         }
 
-        // Thêm sự kiện cho nút đăng nhập
-        document.getElementById('loginButton').addEventListener('click', handleLogin);
+        // Thêm sự kiện cho nút đăng nhập khi trang đã tải xong
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loginButton').addEventListener('click', handleLogin);
+        });
+
         function logout() {
             isLoggedIn = false;
             currentUser = null;
@@ -411,6 +416,7 @@
 
             alert("Đã đăng xuất!");
         }
+
         function applyRoleBasedAccess() {
             // Kiểm tra xem currentUser có tồn tại và có thuộc tính vaitro không
             if (!currentUser || !currentUser.vaitro) {
@@ -724,20 +730,6 @@
             }
         }
 
-        function switchServer(serverId) {
-            currentServer = serverId;
-            updateServerButtons();
-            // No data changes since all servers use the same data
-        }
-
-        function updateServerButtons() {
-            document.getElementById('server1Btn').classList.remove('active-server');
-
-            if (currentServer === 1) {
-                document.getElementById('server1Btn').classList.add('active-server');
-            }
-        }
-
         function toggleSidebar() {
             if (sidebarVisible) {
                 hideSidebar();
@@ -773,6 +765,14 @@
             });
 
             currentSection = section;
+        }
+
+        function updateServerButtons() {
+            // Ví dụ: Cập nhật trạng thái nút server
+            const serverBtn = document.getElementById('server1Btn');
+            if (serverBtn) {
+                serverBtn.classList.add('active');
+            }
         }
 
         function initSystem() {
