@@ -317,7 +317,7 @@
         // API validation cho đăng nhập
         async function validateLogin(taikhoan, matkhau) {
             try {
-                // Use the same server URL pattern that's used for other API calls
+                // Make sure we're using the full URL and the correct HTTP method
                 const response = await fetch('http://18.234.72.198:3000/api/login', {
                     method: 'POST',
                     headers: {
@@ -330,13 +330,65 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Đăng nhập thất bại');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Đăng nhập thất bại');
                 }
 
                 return await response.json();
             } catch (error) {
                 console.error('Lỗi khi gọi API đăng nhập:', error);
                 throw error;
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+                return;
+            }
+
+            try {
+                // For debugging - log before the request is made
+                console.log("Attempting login with:", username);
+
+                const userData = await validateLogin(username, password);
+
+                // For debugging - log after successful response
+                console.log("Login response:", userData);
+
+                currentUser = {
+                    taikhoan: username,
+                    vaitro: userData.vaitro || userData.user.vaitro // Handle different response formats
+                };
+
+                isLoggedIn = true;
+
+                // Update UI for logged in user
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('sidebarMenu').style.display = 'flex';
+                document.getElementById('mainContent').classList.remove('blurred-content');
+                document.getElementById('greeting').innerHTML = `<span class="role-badge">${currentUser.vaitro === 'quản lý' ? 'Quản Lý' : 'Nhân Viên'}</span>`;
+
+                // Apply role-based restrictions
+                applyRoleBasedAccess();
+
+                // Load data after successful login
+                fetchEmployees();
+                fetchDepartments();
+                fetchPositions();
+
+                // Hide sidebar after successful login on mobile
+                if (window.innerWidth <= 768) {
+                    hideSidebar();
+                }
+
+                alert(`Đăng nhập thành công!`);
+            } catch (error) {
+                console.error("Login error details:", error);
+                alert("Tên đăng nhập hoặc mật khẩu không đúng!");
             }
         }
 
@@ -679,51 +731,6 @@
             });
 
             currentSection = section;
-        }
-
-
-        async function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if (!username || !password) {
-                alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
-                return;
-            }
-
-            try {
-                const userData = await validateLogin(username, password);
-
-                currentUser = {
-                    taikhoan: username,
-                    vaitro: userData.vaitro
-                };
-
-                isLoggedIn = true;
-
-                // Update UI for logged in user
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('sidebarMenu').style.display = 'flex';
-                document.getElementById('mainContent').classList.remove('blurred-content');
-                document.getElementById('greeting').innerHTML = `<span class="role-badge">${currentUser.vaitro === 'quản lý' ? 'Quản Lý' : 'Nhân Viên'}</span>`;
-
-                // Apply role-based restrictions
-                applyRoleBasedAccess();
-
-                // Load data after successful login
-                fetchEmployees();
-                fetchDepartments();
-                fetchPositions();
-
-                // Hide sidebar after successful login on mobile
-                if (window.innerWidth <= 768) {
-                    hideSidebar();
-                }
-
-                alert(`Đăng nhập thành công!`);
-            } catch (error) {
-                alert("Tên đăng nhập hoặc mật khẩu không đúng!");
-            }
         }
 
         function applyRoleBasedAccess() {

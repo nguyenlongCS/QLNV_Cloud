@@ -67,12 +67,31 @@ app.get('/api/chucvu', (req, res) => {
 });
 
 
+// Make sure CORS is properly configured at the top of your server.js file
+app.use(cors({
+    origin: '*',  // Or specify your allowed origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Ensure body parser is properly configured
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Route POST cho login
 app.post('/api/login', (req, res) => {
+    // Add debug logging
+    console.log('Login request received:', req.body);
+    
     const taikhoan = req.body.taikhoan?.trim();
     const matkhau = req.body.matkhau?.trim();
 
-    console.log('Đăng nhập POST:', taikhoan, matkhau);
+    if (!taikhoan || !matkhau) {
+        console.log('Missing username or password');
+        return res.status(400).json({ error: 'Thiếu tên đăng nhập hoặc mật khẩu' });
+    }
+
+    console.log('Processing login request for:', taikhoan);
 
     // Modified SQL to not check vaitro initially, just fetch it
     const sql = `
@@ -83,9 +102,11 @@ app.post('/api/login', (req, res) => {
 
     db.query(sql, [taikhoan, matkhau], (err, result) => {
         if (err) {
-            console.error('Lỗi truy vấn login:', err);
+            console.error('SQL error during login:', err);
             return res.status(500).json({ error: 'Lỗi khi đăng nhập' });
         }
+
+        console.log('Query results:', result);
 
         if (result.length === 0) {
             return res.status(401).json({ error: 'Sai thông tin đăng nhập' });
@@ -94,8 +115,10 @@ app.post('/api/login', (req, res) => {
         // Return user data including vaitro
         res.json({ 
             message: 'Đăng nhập thành công!', 
-            taikhoan: result[0].taikhoan,
-            vaitro: result[0].vaitro 
+            user: {
+                taikhoan: result[0].taikhoan,
+                vaitro: result[0].vaitro
+            }
         });
     });
 });
