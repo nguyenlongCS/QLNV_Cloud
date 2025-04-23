@@ -78,21 +78,28 @@ app.get('/api/login', (req, res) => {
     });
 });
 
-// API thêm nhân viên
 app.post('/api/nhanvien', async (req, res) => {
     try {
         const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
+
+        console.log('Dữ liệu nhận:', req.body); // log dữ liệu vào
+
         const sql = `
-            INSERT INTO nhanvien (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id)
+            INSERT INTO nhanvien 
+            (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
-        const [result] = await pool.execute(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id]);
+        const [result] = await pool.execute(sql, [
+            ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id
+        ]);
+
         res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
     } catch (error) {
-        console.error('Lỗi SQL:', error);
-        res.status(500).json({ error: 'Lỗi khi thêm nhân viên' });
+        console.error('❌ Lỗi SQL:', error.message); // hiện rõ lỗi
+        res.status(500).json({ error: error.message }); // trả về lỗi rõ cho frontend
     }
 });
+
 
 
 
