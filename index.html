@@ -332,7 +332,6 @@
     </style>
     <!-- <link rel="stylesheet" href="style.css"> -->
     <title>Employee Manager</title>
-
 </head>
 
 <body>
@@ -343,7 +342,7 @@
             <div class="login-form" id="loginForm">
                 <input type="text" placeholder="Tên đăng nhập" id="username">
                 <input type="password" placeholder="Mật khẩu" id="password">
-                <button onclick="handleLogin()">Đăng nhập</button>
+                <button id="loginButton" onclick="handleLogin()">Đăng nhập</button>
             </div>
         </div>
 
@@ -456,6 +455,8 @@
         let currentUser = null;
         let sidebarVisible = true;
         let currentSection = 'employee';
+        let departments = [];
+        let positions = [];
 
         //1.API để lấy nhân viên
         async function fetchEmployees() {
@@ -540,6 +541,7 @@
                     throw new Error('Không thể lấy dữ liệu phòng ban');
                 }
                 const data = await response.json();
+                departments = data; // Lưu dữ liệu phòng ban
                 populateDepartmentSelect(data);
             } catch (error) {
                 console.error('Lỗi:', error);
@@ -553,6 +555,7 @@
                     throw new Error('Không thể lấy dữ liệu chức vụ');
                 }
                 const data = await response.json();
+                positions = data; // Lưu dữ liệu chức vụ
                 populatePositionSelect(data);
             } catch (error) {
                 console.error('Lỗi:', error);
@@ -664,6 +667,11 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            if (!username || !password) {
+                alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+                return;
+            }
+
             // Gọi API để lấy dữ liệu người dùng
             fetch('http://18.234.72.198:3000/api/login')
                 .then(response => {
@@ -691,6 +699,11 @@
                         // Bỏ làm mờ nội dung chính
                         document.getElementById('mainContent').classList.remove('blurred-content');
 
+                        // Tải dữ liệu nhân viên, phòng ban và chức vụ
+                        fetchEmployees();
+                        fetchDepartments();
+                        fetchPositions();
+
                         // Áp dụng phân quyền dựa trên vai trò
                         applyRoleBasedAccess();
                     } else {
@@ -704,8 +717,6 @@
                 });
         }
 
-        // Thêm sự kiện cho nút đăng nhập
-        document.getElementById('loginButton').addEventListener('click', handleLogin);
         function logout() {
             isLoggedIn = false;
             currentUser = null;
@@ -729,11 +740,16 @@
             document.getElementById('actionButtons').style.display = 'flex';
             clearForm();
 
+            // Clear table
+            document.querySelector('#employeeTable tbody').innerHTML = '';
+            sharedEmployees = [];
+
             // Show sidebar on logout
             showSidebar();
 
             alert("Đã đăng xuất!");
         }
+
         function applyRoleBasedAccess() {
             // Kiểm tra xem currentUser có tồn tại và có thuộc tính vaitro không
             if (!currentUser || !currentUser.vaitro) {
@@ -765,6 +781,18 @@
             return date.toLocaleDateString('vi-VN');
         }
 
+        // Hàm lấy tên phòng ban từ ID
+        function getDepartmentName(departmentId) {
+            const department = departments.find(dept => dept.id === departmentId);
+            return department ? department.ten : departmentId;
+        }
+
+        // Hàm lấy tên chức vụ từ ID
+        function getPositionName(positionId) {
+            const position = positions.find(pos => pos.id === positionId);
+            return position ? position.ten : positionId;
+        }
+
         function renderTable() {
             const tableBody = document.querySelector('#employeeTable tbody');
             tableBody.innerHTML = ''; // Xóa dữ liệu cũ
@@ -772,19 +800,24 @@
             sharedEmployees.forEach(nv => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-            <td>${nv.id}</td>
-            <td>${nv.ten}</td>
-            <td>${new Date(nv.namsinh).toLocaleDateString('vi-VN')}</td>
-            <td>${nv.cccd}</td>
-            <td>${nv.sdt}</td>
-            <td>${nv.gioitinh}</td>
-            <td>${nv.chucvu_id}</td>
-            <td>${nv.phongban_id}</td>
-        `;
+                    <td>${nv.id}</td>
+                    <td>${nv.ten || ''}</td>
+                    <td>${formatDate(nv.namsinh)}</td>
+                    <td>${nv.cccd || ''}</td>
+                    <td>${nv.sdt || ''}</td>
+                    <td>${nv.gioitinh || ''}</td>
+                    <td>${getPositionName(nv.chucvu_id)}</td>
+                    <td>${getDepartmentName(nv.phongban_id)}</td>
+                `;
+
+                // Thêm sự kiện click vào hàng để chọn nhân viên
+                row.addEventListener('click', () => {
+                    selectEmployee(nv.id);
+                });
+
                 tableBody.appendChild(row);
             });
         }
-
 
         // Hàm điền dữ liệu vào select
         function populateDepartmentSelect(departments) {
@@ -971,13 +1004,13 @@
             if (!deptId) return;
 
             const deptName = prompt("Nhập tên phòng ban mới:");
-            if (deptName) {
-                try {
-                    await createDepartmentInDb(deptId, deptName);
-                    alert("Tạo phòng ban mới thành công!");
-                } catch (error) {
-                    alert(`Lỗi: ${error.message}`);
-                }
+            if (!deptName) return;
+
+            try {
+                await createDepartmentInDb(deptId, deptName);
+                alert("Tạo phòng ban mới thành công!");
+            } catch (error) {
+                alert(`Lỗi: ${error.message}`);
             }
         }
 
@@ -991,13 +1024,13 @@
             if (!posId) return;
 
             const posName = prompt("Nhập tên chức vụ mới:");
-            if (posName) {
-                try {
-                    await createPositionInDb(posId, posName);
-                    alert("Tạo chức vụ mới thành công!");
-                } catch (error) {
-                    alert(`Lỗi: ${error.message}`);
-                }
+            if (!posName) return;
+
+            try {
+                await createPositionInDb(posId, posName);
+                alert("Tạo chức vụ mới thành công!");
+            } catch (error) {
+                alert(`Lỗi: ${error.message}`);
             }
         }
 
@@ -1086,6 +1119,27 @@
             currentSection = section;
         }
 
+        // Thêm sự kiện cho server button
+        document.getElementById('server1Btn').addEventListener('click', function () {
+            // Kiểm tra kết nối server
+            fetch('http://18.234.72.198:3000/api/status')
+                .then(response => {
+                    if (!response.ok) throw new Error('Server không phản hồi');
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Kết nối tới Server 1 thành công!');
+                    if (isLoggedIn) {
+                        fetchEmployees();
+                        fetchDepartments();
+                        fetchPositions();
+                    }
+                })
+                .catch(error => {
+                    console.error('Không thể kết nối tới server:', error);
+                    alert('Không thể kết nối tới Server 1. Vui lòng kiểm tra lại kết nối.');
+                });
+        });
         function initSystem() {
             // Start with empty employees array
             sharedEmployees = [];
