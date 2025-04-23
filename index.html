@@ -90,6 +90,24 @@
             font-weight: bold;
         }
 
+        .sidebar-menu .menu-item {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-menu .menu-item.active {
+            background-color: #ff3333;
+            font-weight: bold;
+        }
+
+        .sidebar-menu .menu-item:hover {
+            background-color: #444;
+        }
+
         .content-wrapper {
             flex: 1;
             display: flex;
@@ -349,8 +367,8 @@
         <!-- Menu - Shown after login -->
         <div id="sidebarMenu" class="sidebar-menu">
             <h2>Chức năng</h2>
-            <a href="#" class="active" onclick="showSection('employee')">Danh sách nhân viên</a>
-            <a href="#" class="active" onclick="logout()">Đăng xuất</a>
+            <a href="#" class="menu-item active" onclick="showSection('employee')">Danh sách nhân viên</a>
+            <a href="#" class="menu-item" onclick="logout()">Đăng xuất</a>
         </div>
     </div>
 
