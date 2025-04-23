@@ -476,6 +476,9 @@
 
         async function addEmployeeToDb(employee) {
             try {
+                // Log the data being sent for debugging
+                console.log("Sending employee data:", JSON.stringify(employee));
+
                 const response = await fetch('http://75.101.198.89:3000/api/nhanvien', {
                     method: 'POST',
                     headers: {
@@ -485,12 +488,14 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Không thể thêm nhân viên');
+                    const errorData = await response.text();
+                    console.error("Server error response:", errorData);
+                    throw new Error(`Không thể thêm nhân viên: ${response.status} ${response.statusText}`);
                 }
 
                 return await response.json();
             } catch (error) {
-                console.error('Lỗi:', error);
+                console.error('Lỗi khi thêm nhân viên:', error);
                 throw error;
             }
         }
@@ -800,15 +805,15 @@
             sharedEmployees.forEach(nv => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${nv.id}</td>
-                    <td>${nv.ten || ''}</td>
-                    <td>${formatDate(nv.namsinh)}</td>
-                    <td>${nv.cccd || ''}</td>
-                    <td>${nv.sdt || ''}</td>
-                    <td>${nv.gioitinh || ''}</td>
-                    <td>${getPositionName(nv.chucvu_id)}</td>
-                    <td>${getDepartmentName(nv.phongban_id)}</td>
-                `;
+            <td>${nv.id}</td>
+            <td>${nv.ten || ''}</td>
+            <td>${formatDate(nv.namsinh)}</td>
+            <td>${nv.cccd || ''}</td>
+            <td>${nv.sdt || ''}</td>
+            <td>${nv.gioitinh || ''}</td>
+            <td>${getPositionName(nv.chucvu_id)}</td>
+            <td>${getDepartmentName(nv.phongban_id)}</td>
+        `;
 
                 // Thêm sự kiện click vào hàng để chọn nhân viên
                 row.addEventListener('click', () => {
@@ -876,6 +881,7 @@
             }
         }
 
+        // Fixed function to add employee
         async function addEmployee() {
             if (!isLoggedIn || currentUser.vaitro !== 'quản lý') {
                 alert("Bạn không có quyền thực hiện chức năng này!");
@@ -895,23 +901,40 @@
                 return;
             }
 
+            // Validate required fields
+            if (!position) {
+                alert("Vui lòng chọn Chức vụ!");
+                return;
+            }
+
+            if (!department) {
+                alert("Vui lòng chọn Phòng ban!");
+                return;
+            }
+
             try {
+                // Create employee object with correct format
                 const newEmployee = {
                     ten: name,
-                    namsinh: dob,
-                    cccd: cccd,
-                    sdt: phone,
-                    gioitinh: gender,
+                    namsinh: dob || null,
+                    cccd: cccd || null,
+                    sdt: phone || null,
+                    gioitinh: gender || null,
                     chucvu_id: position,
                     phongban_id: department
                 };
 
-                await addEmployeeToDb(newEmployee);
+                console.log("Attempting to add employee:", newEmployee);
+
+                const result = await addEmployeeToDb(newEmployee);
+                console.log("Server response:", result);
+
                 await fetchEmployees(); // Refresh employee list
                 clearForm();
                 alert("Thêm nhân viên thành công!");
             } catch (error) {
-                alert(`Lỗi: ${error.message}`);
+                console.error("Detailed error:", error);
+                alert(`Lỗi khi thêm nhân viên: ${error.message}`);
             }
         }
 
@@ -940,10 +963,10 @@
                 const updatedEmployee = {
                     id: id,
                     ten: name,
-                    namsinh: dob,
-                    cccd: cccd,
-                    sdt: phone,
-                    gioitinh: gender,
+                    namsinh: dob || null,
+                    cccd: cccd || null,
+                    sdt: phone || null,
+                    gioitinh: gender || null,
                     chucvu_id: position,
                     phongban_id: department
                 };
@@ -1140,6 +1163,7 @@
                     alert('Không thể kết nối tới Server 1. Vui lòng kiểm tra lại kết nối.');
                 });
         });
+
         function initSystem() {
             // Start with empty employees array
             sharedEmployees = [];
