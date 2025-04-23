@@ -315,24 +315,30 @@
         }
 
         // API validation cho đăng nhập
-        async function validateLogin(username, password, role) {  // Thêm tham số 'role'
-            try {
-                const response = await fetch(`http://18.234.72.198:3000/api/login?taikhoan=${username}&matkhau=${password}&vaitro=${role}`, { // Dùng GET và thêm 'vaitro'
-                    method: 'GET',  // Thay phương thức thành GET theo API của server
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Đăng nhập thất bại');
+        function login(taikhoan, matkhau, vaitro) {
+            return fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    taikhoan: taikhoan,
+                    matkhau: matkhau,
+                    vaitro: vaitro
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Lỗi: ' + data.error);
+                } else {
+                    alert('Đăng nhập thành công!');
+                    console.log('Thông tin người dùng:', data.user);
                 }
-
-                return await response.json();
-            } catch (error) {
-                console.error('Lỗi:', error);
-                throw error;
-            }
+            })
+            .catch(error => {
+                console.error('Lỗi khi gọi API:', error);
+            });
         }
 
 

@@ -67,17 +67,14 @@ app.get('/api/chucvu', (req, res) => {
 });
 
 
-// Route GET cho login
-app.get('/api/login', (req, res) => {
-    // Lấy và xử lý dữ liệu đầu vào
-    const taikhoan = req.query.taikhoan?.trim();
-    const matkhau = req.query.matkhau?.trim();
-    const vaitro = req.query.vaitro?.trim();
+// Route POST cho login
+app.post('/api/login', (req, res) => {
+    const taikhoan = req.body.taikhoan?.trim();
+    const matkhau = req.body.matkhau?.trim();
+    const vaitro = req.body.vaitro?.trim();
 
-    // In log để kiểm tra
-    console.log('Đăng nhập với:', taikhoan, matkhau, vaitro);
+    console.log('Đăng nhập POST:', taikhoan, matkhau, vaitro);
 
-    // Câu truy vấn SQL
     const sql = `
         SELECT * FROM login 
         WHERE taikhoan = ? 
@@ -85,7 +82,6 @@ app.get('/api/login', (req, res) => {
           AND vaitro COLLATE utf8_general_ci = ?
     `;
 
-    // Thực hiện truy vấn
     db.query(sql, [taikhoan, matkhau, vaitro], (err, result) => {
         if (err) {
             console.error('Lỗi truy vấn login:', err);
@@ -99,8 +95,6 @@ app.get('/api/login', (req, res) => {
         res.json({ message: 'Đăng nhập thành công!', user: result[0] });
     });
 });
-
-
 
 
 // API nhận dữ liệu từ HTML
