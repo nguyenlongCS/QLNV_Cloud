@@ -17,7 +17,7 @@
             <div class="login-form" id="loginForm">
                 <input type="text" placeholder="Tên đăng nhập" id="username">
                 <input type="password" placeholder="Mật khẩu" id="password">
-                <button id="loginButton">Đăng nhập</button>
+                <button onclick="login()">Đăng nhập</button>
             </div>
         </div>
 
@@ -368,10 +368,8 @@
                         // Áp dụng phân quyền dựa trên vai trò
                         applyRoleBasedAccess();
 
-                        // Tải dữ liệu
-                        fetchEmployees();
-                        fetchDepartments();
-                        fetchPositions();
+                        // Tải lại dữ liệu bảng nếu cần
+                        fetchData();
                     } else {
                         // Đăng nhập thất bại
                         alert(result.message);
@@ -383,11 +381,8 @@
                 });
         }
 
-        // Thêm sự kiện cho nút đăng nhập khi trang đã tải xong
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('loginButton').addEventListener('click', handleLogin);
-        });
-
+        // Thêm sự kiện cho nút đăng nhập
+        document.getElementById('loginButton').addEventListener('click', handleLogin);
         function logout() {
             isLoggedIn = false;
             currentUser = null;
@@ -416,7 +411,6 @@
 
             alert("Đã đăng xuất!");
         }
-
         function applyRoleBasedAccess() {
             // Kiểm tra xem currentUser có tồn tại và có thuộc tính vaitro không
             if (!currentUser || !currentUser.vaitro) {
@@ -765,14 +759,6 @@
             });
 
             currentSection = section;
-        }
-
-        function updateServerButtons() {
-            // Ví dụ: Cập nhật trạng thái nút server
-            const serverBtn = document.getElementById('server1Btn');
-            if (serverBtn) {
-                serverBtn.classList.add('active');
-            }
         }
 
         function initSystem() {
