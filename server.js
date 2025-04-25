@@ -99,6 +99,6 @@ app.post('/api/nhanvien', (req, res) => {
 });
 
 
-
-
-app.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}`));
+app.listen(PORT, '127.0.0.1', () => {
+    console.log(`Server chạy tại http://localhost:${PORT}`);
+});
