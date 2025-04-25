@@ -1,0 +1,27 @@
+{
+  "name": "qlnv_cloud",
+  "version": "1.0.0",
+  "description": "Quản lý nhân viên trên đám mây",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenlongCS/QLNV_Cloud.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nguyenlongCS/QLNV_Cloud/issues"
+  },
+  "homepage": "https://github.com/nguyenlongCS/QLNV_Cloud#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.0",
+    "path": "^0.12.7"
+  }
+}
