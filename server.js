@@ -38,8 +38,8 @@ app.get('/api/status', (req, res) => {
 
 // Route cho "/api/instance-id" trả về instance ID
 app.get('/api/instance-id', (req, res) => {
-    // Lấy instance ID từ biến môi trường
     const instanceId = process.env.INSTANCE_ID || 'unknown';
+    console.log('INSTANCE_ID from environment:', process.env.INSTANCE_ID); // Thêm dòng này để debug
     res.json({ instanceId: instanceId });
 });
 
