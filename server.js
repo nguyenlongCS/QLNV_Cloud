@@ -36,6 +36,13 @@ app.get('/api/status', (req, res) => {
     res.json({ message: "API is running!" });
 });
 
+// Route cho "/api/instance-id" trả về instance ID
+app.get('/api/instance-id', (req, res) => {
+    // Lấy instance ID từ biến môi trường
+    const instanceId = process.env.INSTANCE_ID || 'unknown';
+    res.json({ instanceId: instanceId });
+});
+
 // Route cho "/api/nhanvien"
 app.get('/api/nhanvien', (req, res) => {
     const sql = 'SELECT * FROM nhanvien';
@@ -104,4 +111,5 @@ app.post('/api/nhanvien', (req, res) => {
 // Sửa để lắng nghe trên tất cả các địa chỉ IP
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server chạy tại http://localhost:${PORT}`);
+    console.log(`Instance ID: ${process.env.INSTANCE_ID || 'unknown'}`);
 });

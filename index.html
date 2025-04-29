@@ -288,7 +288,8 @@
             padding: 10px;
             text-align: center;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
             gap: 10px;
         }
 
@@ -303,6 +304,20 @@
 
         .active-server {
             background-color: #ff3333;
+        }
+
+        .instance-info {
+            color: white;
+            font-weight: bold;
+            margin-right: 20px;
+            background-color: #555;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .server-controls {
+            display: flex;
+            gap: 10px;
         }
 
         .user-greeting {
@@ -462,7 +477,10 @@
         </main>
 
         <footer>
-            <button id="server1Btn" class="server-btn">Server 1</button>
+            <div class="server-controls">
+                <button id="server1Btn" class="server-btn">Server 1</button>
+            </div>
+            <div id="instanceInfo" class="instance-info">Đang kết nối...</div>
         </footer>
     </div>
 
@@ -476,6 +494,21 @@
         let currentSection = 'employee';
         let departments = [];
         let positions = [];
+        
+        // Hàm để lấy và hiển thị instance ID
+        async function fetchInstanceId() {
+            try {
+                const response = await fetch(`http://${hostname}:3000/api/instance-id`);
+                if (!response.ok) {
+                    throw new Error('Không thể lấy thông tin instance');
+                }
+                const data = await response.json();
+                document.getElementById('instanceInfo').textContent = `Instance: ${data.instanceId}`;
+            } catch (error) {
+                console.error('Lỗi khi lấy instance ID:', error);
+                document.getElementById('instanceInfo').textContent = 'Instance: không xác định';
+            }
+        }
         
         //1.API để lấy nhân viên
         async function fetchEmployees() {
