@@ -494,7 +494,7 @@
         let currentSection = 'employee';
         let departments = [];
         let positions = [];
-        
+
         // Hàm để lấy và hiển thị instance ID
         async function fetchInstanceId() {
             try {
@@ -509,7 +509,7 @@
                 document.getElementById('instanceInfo').textContent = 'Instance: không xác định';
             }
         }
-        
+
         //1.API để lấy nhân viên
         async function fetchEmployees() {
             try {
@@ -1246,7 +1246,7 @@
             // Gọi hàm để lấy và hiển thị instance ID
             fetchInstanceId();
         }
-        
+
         // Initialize the system when the page loads
         window.onload = initSystem;
     </script>
