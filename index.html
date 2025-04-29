@@ -293,15 +293,6 @@
             gap: 10px;
         }
 
-        .server-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            background-color: #555;
-            color: white;
-        }
-
         .active-server {
             background-color: #ff3333;
         }
@@ -313,11 +304,6 @@
             background-color: #555;
             padding: 5px 10px;
             border-radius: 4px;
-        }
-
-        .server-controls {
-            display: flex;
-            gap: 10px;
         }
 
         .user-greeting {
@@ -477,9 +463,6 @@
         </main>
 
         <footer>
-            <div class="server-controls">
-                <button id="server1Btn" class="server-btn">Server 1</button>
-            </div>
             <div id="instanceInfo" class="instance-info">Đang kết nối...</div>
         </footer>
     </div>
@@ -503,10 +486,10 @@
                     throw new Error('Không thể lấy thông tin instance');
                 }
                 const data = await response.json();
-                document.getElementById('instanceInfo').textContent = `Instance: ${data.instanceId}`;
+                document.getElementById('instanceInfo').textContent = `server: ${data.instanceId}`;
             } catch (error) {
                 console.error('Lỗi khi lấy instance ID:', error);
-                document.getElementById('instanceInfo').textContent = 'Instance: không xác định';
+                document.getElementById('instanceInfo').textContent = 'server: không xác định';
             }
         }
 
@@ -1190,28 +1173,6 @@
 
             currentSection = section;
         }
-
-        // Thêm sự kiện cho server button
-        document.getElementById('server1Btn').addEventListener('click', function () {
-            // Kiểm tra kết nối server
-            fetch(`http://${hostname}:3000/api/status`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Server không phản hồi');
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Kết nối tới Server 1 thành công!');
-                    if (isLoggedIn) {
-                        fetchEmployees();
-                        fetchDepartments();
-                        fetchPositions();
-                    }
-                })
-                .catch(error => {
-                    console.error('Không thể kết nối tới server:', error);
-                    alert('Không thể kết nối tới Server 1. Vui lòng kiểm tra lại kết nối.');
-                });
-        });
 
         function initSystem() {
             // Start with empty employees array
