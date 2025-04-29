@@ -771,7 +771,6 @@
                     alert(`Lỗi kết nối: ${error.message}`);
                 });
         }
-
         function logout() {
             isLoggedIn = false;
             currentUser = null;
@@ -1244,8 +1243,10 @@
                     console.error('Không thể kết nối tới server:', error);
                     alert('Không thể kết nối tới server Node.js. Vui lòng đảm bảo server đang chạy ở cổng 3000.');
                 });
+            // Gọi hàm để lấy và hiển thị instance ID
+            fetchInstanceId();
         }
-
+        
         // Initialize the system when the page loads
         window.onload = initSystem;
     </script>
