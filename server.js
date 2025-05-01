@@ -7,7 +7,7 @@ const PORT = 3000;
 
 // Middleware
 app.use(express.json());
-app.use(cors());  // Kích hoạt CORS
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'html')));
 
 // Kết nối MySQL RDS
@@ -31,15 +31,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Tạo route mới cho "/api/status"
+// Route cho "/api/status"
 app.get('/api/status', (req, res) => {
     res.json({ message: "API is running!" });
 });
 
-// Route cho "/api/instance-id" trả về instance ID
+// Route cho "/api/instance-id"
 app.get('/api/instance-id', (req, res) => {
     const instanceId = process.env.INSTANCE_ID || 'unknown';
-    console.log('INSTANCE_ID from environment:', process.env.INSTANCE_ID); // Thêm dòng này để debug
+    console.log('INSTANCE_ID from environment:', process.env.INSTANCE_ID);
     res.json({ instanceId: instanceId });
 });
 
@@ -55,40 +55,7 @@ app.get('/api/nhanvien', (req, res) => {
     });
 });
 
-// Route cho "/api/phongban"
-app.get('/api/phongban', (req, res) => {
-    db.query('SELECT * FROM phongban', (err, result) => {
-        if (err) {
-            console.error('Lỗi lấy phongban:', err);
-            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phòng ban', details: err.message });
-        }
-        res.json(result);
-    });
-});
-
-// Route cho "/api/chucvu"
-app.get('/api/chucvu', (req, res) => {
-    db.query('SELECT * FROM chucvu', (err, result) => {
-        if (err) {
-            console.error('Lỗi lấy chucvu:', err);
-            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu chức vụ', details: err.message });
-        }
-        res.json(result);
-    });
-});
-
-// Route cho "/api/login"
-app.get('/api/login', (req, res) => {
-    db.query('SELECT * FROM login', (err, result) => {
-        if (err) {
-            console.error('Lỗi lấy login:', err);
-            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu đăng nhập', details: err.message });
-        }
-        res.json(result);
-    });
-});
-
-// Route để thêm thông tin nhân viên
+// Route để thêm nhân viên
 app.post('/api/nhanvien', (req, res) => {
     const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
     
@@ -108,7 +75,8 @@ app.post('/api/nhanvien', (req, res) => {
         res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
     });
 });
-// Route để cập nhật thông tin nhân viên
+
+// Route để cập nhật nhân viên
 app.put('/api/nhanvien/:id', (req, res) => {
     const id = req.params.id;
     const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
@@ -148,6 +116,105 @@ app.delete('/api/nhanvien/:id', (req, res) => {
             return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
         }
         res.json({ message: 'Đã xóa nhân viên' });
+    });
+});
+
+// Route cho "/api/phongban"
+app.get('/api/phongban', (req, res) => {
+    db.query('SELECT * FROM phongban', (err, result) => {
+        if (err) {
+            console.error('Lỗi lấy phongban:', err);
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu phòng ban', details: err.message });
+        }
+        res.json(result);
+    });
+});
+
+// Route để thêm phòng ban
+app.post('/api/phongban', (req, res) => {
+    const { id, ten } = req.body;
+
+    console.log('Dữ liệu nhận:', req.body);
+
+    const sql = 'INSERT INTO phongban (id, ten) VALUES (?, ?)';
+    db.query(sql, [id, ten], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi thêm phòng ban', details: err.message });
+        }
+        res.status(201).json({ message: 'Đã thêm phòng ban', id: id });
+    });
+});
+
+// Route để xóa phòng ban
+app.delete('/api/phongban/:id', (req, res) => {
+    const id = req.params.id;
+
+    const sql = 'DELETE FROM phongban WHERE id = ?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi xóa phòng ban', details: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy phòng ban' });
+        }
+        res.json({ message: 'Đã xóa phòng ban' });
+    });
+});
+
+// Route cho "/api/chucvu"
+app.get('/api/chucvu', (req, res) => {
+    db.query('SELECT * FROM chucvu', (err, result) => {
+        if (err) {
+            console.error('Lỗi lấy chucvu:', err);
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu chức vụ', details: err.message });
+        }
+        res.json(result);
+    });
+});
+
+// Route để thêm chức vụ
+app.post('/api/chucvu', (req, res) => {
+    const { id, ten } = req.body;
+
+    console.log('Dữ liệu nhận:', req.body);
+
+    const sql = 'INSERT INTO chucvu (id, ten) VALUES (?, ?)';
+    db.query(sql, [id, ten], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi thêm chức vụ', details: err.message });
+        }
+        res.status(201).json({ message: 'Đã thêm chức vụ', id: id });
+    });
+});
+
+// Route để xóa chức vụ
+app.delete('/api/chucvu/:id', (req, res) => {
+    const id = req.params.id;
+
+    const sql = 'DELETE FROM chucvu WHERE id = ?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi xóa chức vụ', details: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy chức vụ' });
+        }
+        res.json({ message: 'Đã xóa chức vụ' });
+    });
+});
+
+// Route cho "/api/login"
+app.get('/api/login', (req, res) => {
+    db.query('SELECT * FROM login', (err, result) => {
+        if (err) {
+            console.error('Lỗi lấy login:', err);
+            return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu đăng nhập', details: err.message });
+        }
+        res.json(result);
     });
 });
 
