@@ -88,6 +88,7 @@ app.get('/api/login', (req, res) => {
     });
 });
 
+// Route để thêm thông tin nhân viên
 app.post('/api/nhanvien', (req, res) => {
     const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
     
@@ -105,6 +106,48 @@ app.post('/api/nhanvien', (req, res) => {
             return res.status(500).json({ error: err.message });
         }
         res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
+    });
+});
+// Route để cập nhật thông tin nhân viên
+app.put('/api/nhanvien/:id', (req, res) => {
+    const id = req.params.id;
+    const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
+
+    console.log('Dữ liệu cập nhật:', req.body);
+
+    const sql = `
+        UPDATE nhanvien 
+        SET ten = ?, namsinh = ?, gioitinh = ?, cccd = ?, sdt = ?, chucvu_id = ?, phongban_id = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id, id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi cập nhật nhân viên', details: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
+        }
+        res.json({ message: 'Đã cập nhật nhân viên' });
+    });
+});
+
+// Route để xóa nhân viên
+app.delete('/api/nhanvien/:id', (req, res) => {
+    const id = req.params.id;
+
+    const sql = 'DELETE FROM nhanvien WHERE id = ?';
+
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi xóa nhân viên', details: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
+        }
+        res.json({ message: 'Đã xóa nhân viên' });
     });
 });
 
