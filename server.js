@@ -7,7 +7,7 @@ const PORT = 3000;
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors());  // Kích hoạt CORS
 app.use(express.static(path.join(__dirname, 'html')));
 
 // Kết nối MySQL RDS
@@ -31,15 +31,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route cho "/api/status"
+// Tạo route mới cho "/api/status"
 app.get('/api/status', (req, res) => {
     res.json({ message: "API is running!" });
 });
 
-// Route cho "/api/instance-id"
+// Route cho "/api/instance-id" trả về instance ID
 app.get('/api/instance-id', (req, res) => {
     const instanceId = process.env.INSTANCE_ID || 'unknown';
-    console.log('INSTANCE_ID from environment:', process.env.INSTANCE_ID);
+    console.log('INSTANCE_ID from environment:', process.env.INSTANCE_ID); // Thêm dòng này để debug
     res.json({ instanceId: instanceId });
 });
 
@@ -52,70 +52,6 @@ app.get('/api/nhanvien', (req, res) => {
             return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu nhân viên', details: err.message });
         }
         res.json(result);
-    });
-});
-
-// Route để thêm nhân viên
-app.post('/api/nhanvien', (req, res) => {
-    const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
-    
-    console.log('Dữ liệu nhận:', req.body);
-    
-    const sql = `
-        INSERT INTO nhanvien 
-        (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    
-    db.query(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id], (err, result) => {
-        if (err) {
-            console.error('❌ Lỗi SQL:', err.message);
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
-    });
-});
-
-// Route để cập nhật nhân viên
-app.put('/api/nhanvien/:id', (req, res) => {
-    const id = req.params.id;
-    const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
-
-    console.log('Dữ liệu cập nhật:', req.body);
-
-    const sql = `
-        UPDATE nhanvien 
-        SET ten = ?, namsinh = ?, gioitinh = ?, cccd = ?, sdt = ?, chucvu_id = ?, phongban_id = ?
-        WHERE id = ?
-    `;
-
-    db.query(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id, id], (err, result) => {
-        if (err) {
-            console.error('❌ Lỗi SQL:', err.message);
-            return res.status(500).json({ error: 'Lỗi khi cập nhật nhân viên', details: err.message });
-        }
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
-        }
-        res.json({ message: 'Đã cập nhật nhân viên' });
-    });
-});
-
-// Route để xóa nhân viên
-app.delete('/api/nhanvien/:id', (req, res) => {
-    const id = req.params.id;
-
-    const sql = 'DELETE FROM nhanvien WHERE id = ?';
-
-    db.query(sql, [id], (err, result) => {
-        if (err) {
-            console.error('❌ Lỗi SQL:', err.message);
-            return res.status(500).json({ error: 'Lỗi khi xóa nhân viên', details: err.message });
-        }
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
-        }
-        res.json({ message: 'Đã xóa nhân viên' });
     });
 });
 
@@ -215,6 +151,69 @@ app.get('/api/login', (req, res) => {
             return res.status(500).json({ error: 'Lỗi khi lấy dữ liệu đăng nhập', details: err.message });
         }
         res.json(result);
+    });
+});
+
+// Route để thêm thông tin nhân viên
+app.post('/api/nhanvien', (req, res) => {
+    const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
+    
+    console.log('Dữ liệu nhận:', req.body);
+    
+    const sql = `
+        INSERT INTO nhanvien 
+        (ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+    db.query(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ message: 'Đã thêm nhân viên', id: result.insertId });
+    });
+});
+// Route để cập nhật thông tin nhân viên
+app.put('/api/nhanvien/:id', (req, res) => {
+    const id = req.params.id;
+    const { ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id } = req.body;
+
+    console.log('Dữ liệu cập nhật:', req.body);
+
+    const sql = `
+        UPDATE nhanvien 
+        SET ten = ?, namsinh = ?, gioitinh = ?, cccd = ?, sdt = ?, chucvu_id = ?, phongban_id = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [ten, namsinh, gioitinh, cccd, sdt, chucvu_id, phongban_id, id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi cập nhật nhân viên', details: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
+        }
+        res.json({ message: 'Đã cập nhật nhân viên' });
+    });
+});
+
+// Route để xóa nhân viên
+app.delete('/api/nhanvien/:id', (req, res) => {
+    const id = req.params.id;
+
+    const sql = 'DELETE FROM nhanvien WHERE id = ?';
+
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('❌ Lỗi SQL:', err.message);
+            return res.status(500).json({ error: 'Lỗi khi xóa nhân viên', details: err.message });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
+        }
+        res.json({ message: 'Đã xóa nhân viên' });
     });
 });
 
