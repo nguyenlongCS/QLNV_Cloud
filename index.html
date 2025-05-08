@@ -486,10 +486,10 @@
                     throw new Error('Không thể lấy thông tin instance');
                 }
                 const data = await response.json();
-                document.getElementById('instanceInfo').textContent = `server: ${data.instanceId}`;
+                document.getElementById('instanceInfo').textContent = `${data.instanceId}`;
             } catch (error) {
                 console.error('Lỗi khi lấy instance ID:', error);
-                document.getElementById('instanceInfo').textContent = 'server: không xác định';
+                document.getElementById('instanceInfo').textContent = 'không xác định';
             }
         }
 
@@ -505,7 +505,7 @@
                 renderTable();
             } catch (error) {
                 console.error('Lỗi:', error);
-                alert(`Không thể kết nối đến server: ${error.message}`);
+                alert(`Không thể kết nối đến: ${error.message}`);
             }
         }
 
@@ -1201,7 +1201,7 @@
                     // Server đang chạy, không cần làm gì thêm
                 })
                 .catch(error => {
-                    console.error('Không thể kết nối tới server:', error);
+                    console.error('Không thể kết nối tới: ', error);
                     alert('Không thể kết nối tới server Node.js. Vui lòng đảm bảo server đang chạy ở cổng 3000.');
                 });
             // Gọi hàm để lấy và hiển thị instance ID
