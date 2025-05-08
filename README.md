@@ -2,7 +2,7 @@
 
 **Web application quản lý nhân viên trên đám mây - dễ dùng, dễ mở rộng, triển khai siêu mượt với AWS!**
 
-🔗 **Truy cập ngay:** [http://ems.io.vn](http://ems.io.vn) *(đôi lúc không truy cập được do AWS đã kết thúc lab nhé 😅)*  
+🔗 **Truy cập ngay:** [http://ems.io.vn](http://ems.io.vn) *(đôi lúc không truy cập được do AWS lab Closed nhé 😅)*  
 👉 *(Tên miền qua Cloudflare DNS, trỏ về AWS ALB: `xx-xx-xx.us-east-1.elb.amazonaws.com`)*
 
 ---
